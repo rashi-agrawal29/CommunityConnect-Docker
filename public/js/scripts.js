@@ -25,7 +25,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const data = await res.json();
 
         if (res.ok) {
-          alert('Registration successful!');
+          // Show a success message that the email verification has been sent
+          alert('A verification link has been sent to your email. Please check and verify your account.');
           window.location.href = '/pages/login.html';
         } else {
           errorBox.style.display = 'block';

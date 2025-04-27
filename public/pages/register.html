@@ -25,31 +25,35 @@
         <form id="registerForm" class="col s12">
           <div class="row">
           <div class="input-field col s12">
-            <input id="name" type="text" class="validate">
+            <input id="name" type="text" class="validate" required>
             <label for="name">Full Name</label>
           </div>
           <div class="row">
             <div class="input-field col s12">
-              <input id="register_email" type="email" class="validate">
+              <input id="register_email" type="email" class="validate" required>
               <label for="register_email">Email</label>
             </div>
           </div>
           <div class="row">
             <div class="input-field col s12">
-              <input id="register_password" type="password" class="validate">
+              <input id="register_password" type="password" class="validate" required>
               <label for="register_password">Password</label>
             </div>
           </div>
-          <button class="btn waves-effect waves-light submit-btn" type="submit">Register
-            
-          </button>
+          <button class="btn waves-effect waves-light submit-btn" type="submit">Register</button>
         </form>
       </div>
+      
+      <!-- Success message to notify user about the verification email -->
+      <div id="verification-message" class="card-panel green lighten-4 green-text text-darken-4" style="display: none;">
+        <p>A verification email has been sent to your email address. Please check your inbox and verify your account.</p>
+      </div>
+
       <div class="center-align" style="margin-top: 20px;">
         <a href="/api/auth/google" class="btn red darken-1">
           <i class="material-icons left">account_circle</i> Register with Gmail
         </a>
-      </div>      
+      </div>
       <div class="row">
         <div class="col s12 center-align">
           <p>Already have an account? <a href="/pages/login.html">Login here</a></p>
