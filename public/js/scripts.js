@@ -83,11 +83,6 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 
-
-
-
-
-
 // ----------------------
 // Helper Functions
 // ----------------------

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 const User = require('./models/userModel');
 const Task = require('./models/taskModel');
 
@@ -8,24 +9,23 @@ mongoose.connect('mongodb://localhost:27017/CTB', )
     await User.deleteMany({});
     await Task.deleteMany({});
 
+    // Hash password
+    const password = await bcrypt.hash('password123', 10);
+
     // Create admin user1
-    const adminUser = await User.create({
-      name: 'adminUser',
-      email: 'admin@example.com',
-      password: 'password123',
-      isVerified: true,
-      verificationToken: "123",
-      role: 'admin'
+    const user1 = await User.create({
+      name: 'User1',
+      email: 'user1@example.com',
+      password: password,
+      isVerified: true
     });
 
     // Create worker user2
-    const workerUser = await User.create({
-      name: 'workerUser',
-      email: 'worker@example.com',
-      password: 'password123',
-      isVerified: true,
-      verificationToken: "123",
-      role: 'worker'
+    const user2 = await User.create({
+      name: 'User2',
+      email: 'user2@example.com',
+      password: password,
+      isVerified: true
     });
 
     // Sample tasks assigned to the worker
@@ -37,8 +37,8 @@ mongoose.connect('mongodb://localhost:27017/CTB', )
         link: "http://example.com/task1",
         dueDate: new Date(Date.now() + 86400000),
         status: "",
-        createdBy: adminUser._id,
-        assignedTo: workerUser._id
+        createdBy: user1._id,
+        assignedTo: user2._id
       },
       {
         title: "Task 2: Develop Feature",
@@ -47,8 +47,8 @@ mongoose.connect('mongodb://localhost:27017/CTB', )
         link: "http://example.com/task2",
         dueDate: new Date(Date.now() + 2 * 86400000),
         status: "",
-        createdBy: adminUser._id,
-        assignedTo: workerUser._id
+        createdBy: user1._id,
+        assignedTo: user2._id
       }
     ];
 
