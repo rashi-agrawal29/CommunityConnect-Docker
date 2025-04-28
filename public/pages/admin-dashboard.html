@@ -1,0 +1,143 @@
+<!-- public/pages/admin-dashboard.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard - CommunityConnect</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+<body>
+  <nav>
+    <div class="nav-wrapper">
+      <a href="#" class="brand-logo center">Admin Dashboard</a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="/pages/landing.html">Home</a></li>
+        <li><a href="/pages/login.html">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+  
+  <div class="row" style="margin: 0;">
+    <!-- Left Side: Worker List -->
+    <div class="col s12 m3" style="padding: 20px;">
+      <h5>Workers</h5>
+      <ul id="worker-list" class="collection">
+        <!-- We'll insert <li class="collection-item"> elements here -->
+      </ul>
+    </div>
+
+    <!-- Right Column: Tasks Section -->
+    <div class="col s12 m9" style="padding: 20px;">
+      <h4>Manage Tasks</h4>
+      <a class="waves-effect waves-light btn modal-trigger" href="#modalAddTask" style="background-color: #178841;">Add New Task</a><br><br>
+      <div id="admin-task-list" class="row">
+        <!-- Existing tasks will be rendered here -->
+      </div>
+
+    </div>
+  </div>
+  
+
+  <!-- Add Task Modal -->
+  <div id="modalAddTask" class="modal">
+    <div class="modal-content form-container">
+      <h4>Add Task</h4>
+      <div class="row">
+        <form id="addTaskForm" class="col s12">
+          <div class="row">
+            <div class="input-field col s12">
+              <input id="task_title" type="text" class="validate">
+              <label for="task_title">Title</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s12">
+              <textarea id="task_description" class="materialize-textarea"></textarea>
+              <label for="task_description">Description</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s12">
+              <input id="task_dueDate" type="date" class="validate">
+              <label for="task_dueDate">Due Date</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s12">
+              <input id="task_assignedTo" type="text" class="validate">
+              <label for="task_assignedTo">Assigned To (Email or Username)</label>
+
+            </div>
+          </div>
+          <button class="btn waves-effect waves-light custom-btn" type="submit">Submit
+            
+          </button>
+        </form>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+    </div>
+  </div>
+  <!-- Edit Task Modal -->
+<div id="editTaskModal" class="modal">
+  <div class="modal-content form-container">
+    <h4>Edit Task</h4>
+    <div class="row">
+      <form id="editTaskForm" class="col s12">
+        <!-- Hidden field to store task id (optional, or use modal data attribute) -->
+        <input type="hidden" id="edit_task_id">
+        
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="edit_task_title" type="text" class="validate">
+            <label for="edit_task_title">Title</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <textarea id="edit_task_description" class="materialize-textarea"></textarea>
+            <label for="edit_task_description">Description</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="edit_task_dueDate" type="date" class="validate">
+            <label for="edit_task_dueDate">Due Date</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="edit_task_assignedTo" type="text" class="validate">
+            <label for="edit_task_assignedTo">Assigned To (Email or Username)</label>
+
+          </div>
+        </div>
+        <button class="btn waves-effect waves-light custom-btn" type="submit">Update
+          
+        </button>
+      </form>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+  </div>
+</div>
+
+<div class="container"></div>
+<footer class="page-footer"> 
+    © 2025 Community Task Board
+</footer>
+
+  
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Materialize JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<!-- Socket.io client -->
+<script src="/socket.io/socket.io.js"></script>
+<!-- Your combined script file -->
+<script src="../js/scripts.js"></script>
+</body>
+</html>

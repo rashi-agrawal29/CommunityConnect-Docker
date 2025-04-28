@@ -1,0 +1,88 @@
+<!-- public/pages/worker-dashboard.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>CommunityConnect</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <!-- in <head> of admin‑dashboard.html & worker‑dashboard.html -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+</head>
+<body>
+  <nav>
+    <div class="nav-wrapper">
+      <a href="#" class="brand-logo center"> Dashboard</a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <!-- add inside your <ul class="right hide-on-med-and-down"> -->
+<li>
+  <a href="#!" 
+     class="dropdown-trigger" 
+     data-target="notifDropdown" 
+     style="position:relative;">
+    <i class="material-icons">notifications</i>
+    <ul id="notifDropdown" class="dropdown-content">
+      <li class="no-notifs">You’re all caught up!</li>
+    </ul>
+    
+    <span id="notification-count" 
+          class="new badge" 
+          style="position:absolute;top:8px;right:8px;display:none;">
+      0
+    </span>
+  </a>
+</li>
+
+        <li><a href="/pages/landing.html">Home</a></li>
+        <li><a href="/pages/login.html">Logout</a></li>
+      </ul>
+      <ul class="left">
+        <li><span id="welcomeMessage" style="padding-left:1rem; color: #fff;"></span></li>
+      </ul>
+    </div>
+  </nav>
+ <!-- right under </nav> -->
+<ul id="notifDropdown" class="dropdown-content" style="width:300px; max-height:300px; overflow-y:auto;">
+  <!-- JS will inject <li> items here -->
+  <li class="no-notifs"><em>No new notifications</em></li>
+</ul>
+
+  
+  <div class="row" style="margin:0;">
+    <!-- LEFT COLUMN: My Tasks -->
+    <div class="col s12 m3" style="padding: 20px;">
+      <h5>My Tasks</h5>
+      <div id="my-task-list" class="row">
+        <!-- Tasks assigned to me will appear here -->
+      </div>
+    </div>
+    
+    <!-- RIGHT COLUMN: Available Tasks -->
+  <div class="container">
+    <h2>Available Tasks</h2>
+    <div class="row">
+      <div class="input-field col s8">
+        <input id="filter_input" type="text">
+        <label for="filter_input">Filter tasks by title/description</label>
+      </div>
+      <div class="col s4"> <br>
+        <button id="filter_btn" class="btn waves-effect waves-light custom-btn">Filter</button>
+      </div>
+    </div>
+    <div id="worker-task-list" class="row">
+      <!-- Worker tasks will load here -->
+    </div>
+  </div>
+
+  
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Materialize JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <!-- Socket.io client -->
+  <script src="/socket.io/socket.io.js"></script>
+  <!-- Your combined script file -->
+  <script src="../js/scripts.js"></script>
+</body>
+</html>

@@ -30,6 +30,12 @@ const authRoutes = require('./routes/auth');
 // Mount routes
 app.use('/api/auth', authRoutes);
 
+// TASKS
+const tasksRouter = require('./routes/tasks');
+app.use('/api/tasks', tasksRouter);
+
+
+
 // Route to serve the landing page
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'pages', 'login.html'));

@@ -3,7 +3,7 @@ const passport = require('passport');
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
-const User = require('../model/User');
+const User = require('../models/userModel');
 const router = express.Router();
 
 
