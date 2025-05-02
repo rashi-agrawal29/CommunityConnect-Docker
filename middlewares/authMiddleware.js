@@ -1,12 +1,22 @@
 const jwt = require('jsonwebtoken');
+const { SECRET_KEY } = require('../config/jwt');
 
-exports.verifyToken = (req, res, next) => {
-  const token = req.headers['authorization'] && req.headers['authorization'].split(' ')[1];
-  if (!token) return res.status(401).json({ error: 'No token provided.' });
+const authenticate = (req, res, next) => {
+  const authHeader = req.headers.authorization;
 
-  jwt.verify(token, 'YOUR_JWT_SECRET', (err, decoded) => {
-    if (err) return res.status(401).json({ error: 'Failed to authenticate token.' });
-    req.user = decoded;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'Unauthorized: No token provided' });
+  }
+
+  const token = authHeader.split(' ')[1];
+
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    req.user = decoded; // Add user data to request
     next();
-  });
+  } catch (err) {
+    res.status(401).json({ message: 'Invalid or expired token' });
+  }
 };
+
+module.exports = authenticate;
