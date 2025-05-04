@@ -164,33 +164,6 @@ function renderTaskCard($container, isMine, task) {
   `);
 }
 
-function acceptTask(id) {
-  const token = localStorage.getItem('jwtToken');
-  const user  = JSON.parse(localStorage.getItem('user'));
-  $.ajax({
-    method: "PUT",
-    url: `/api/tasks/${id}`,
-    headers: { Authorization: `Bearer ${token}` },
-    contentType: "application/json",
-    data: JSON.stringify({ assignedTo: user.id }),
-    success: () => loadWorkerTasks(),
-    error: err => console.error('Error accepting task:', err)
-  });
-}
-
-function updateTaskStatus(id, status) {
-  const token = localStorage.getItem('jwtToken');
-  $.ajax({
-    method: "PUT",
-    url: `/api/tasks/${id}`,
-    headers: { Authorization: `Bearer ${token}` },
-    contentType: "application/json",
-    data: JSON.stringify({ status }),
-    success: () => loadWorkerTasks(),
-    error: err => console.error('Error updating status:', err)
-  });
-}
-
 function loadAdminTasks() {
   const token = localStorage.getItem('jwtToken');
   $.ajax({
@@ -201,7 +174,10 @@ function loadAdminTasks() {
       const $list = $('#admin-task-list').empty();
       tasks.forEach(task => {
         const due = new Date(task.dueDate).toLocaleDateString();
-        const asg = task.assignedTo ? task.assignedTo.username : 'Unassigned';
+        const asg = task.assignedTo
+  ? (task.assignedTo.name || task.assignedTo.displayName)
+  : 'Unassigned';
+
         $list.append(`
           <div class="col s12 m6 l4">
             <div class="card">
@@ -224,87 +200,6 @@ function loadAdminTasks() {
     },
     error: err => console.error('Error loading admin tasks', err)
   });
-}
-
-function editTask(id) {
-  const token = localStorage.getItem('jwtToken');
-  $.ajax({
-    method: "GET",
-    url: `/api/tasks/${id}`,
-    headers: { Authorization: `Bearer ${token}` },
-    success: task => {
-      $('#edit_task_id').val(task._id);
-      $('#edit_task_title').val(task.title);
-      $('#edit_task_description').val(task.description);
-      if (task.dueDate) {
-        $('#edit_task_dueDate').val(new Date(task.dueDate).toISOString().split('T')[0]);
-      }
-      $('#edit_task_assignedTo').val(
-        task.assignedTo?.email || task.assignedTo?.username || ''
-      );
-      M.updateTextFields();
-      $('#editTaskModal').modal('open');
-    },
-    error: err => console.error('Error fetching task for edit', err)
-  });
-}
-
-$('#editTaskForm').submit(function(e) {
-  e.preventDefault();
-  const token  = localStorage.getItem('jwtToken');
-  const id     = $('#edit_task_id').val();
-  const payload= {
-    title:      $('#edit_task_title').val(),
-    description:$('#edit_task_description').val(),
-    dueDate:     $('#edit_task_dueDate').val(),
-    assignedTo:  $('#edit_task_assignedTo').val() || undefined
-  };
-  $.ajax({
-    method: "PUT",
-    url: `/api/tasks/${id}`,
-    headers: { Authorization: `Bearer ${token}` },
-    contentType: "application/json",
-    data: JSON.stringify(payload),
-    success: () => {
-      $('#editTaskModal').modal('close');
-      loadAdminTasks();
-    },
-    error: err => console.error('Error updating task', err)
-  });
-});
-
-function deleteTask(id) {
-  if (!confirm('Sure you want to delete?')) return;
-  const token = localStorage.getItem('jwtToken');
-  $.ajax({
-    method: "DELETE",
-    url: `/api/tasks/${id}`,
-    headers: { Authorization: `Bearer ${token}` },
-    success: () => loadAdminTasks(),
-    error: err => console.error('Error deleting task', err)
-  });
-}
-
-// 🔔 NOTIFS: in‑memory notification store
-let notifications = [];
-
-// 🔔 NOTIFS: helper to prepend a message + bump badge
-function addNotification(message) {
-  notifications.unshift(message);
-  $('#notifDropdown .no-notifs').remove();
-
-  const time = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-  $('#notifDropdown').prepend(`
-    <li class="notif-item">
-      <span>${message}</span>
-      <small class="grey-text text-darken-1">${time}</small>
-    </li>
-    <li class="divider" tabindex="-1"></li>
-  `);
-
-  $('#notification-count')
-    .text(notifications.length)
-    .show();
 }
 
 
@@ -340,27 +235,31 @@ $('#addTaskForm').submit(function(e) {
 function loadWorkers() {
   const token = localStorage.getItem('jwtToken');
   $.ajax({
-    method: "GET",
-    url: "/api/workers",
-    headers: { Authorization: `Bearer ${token}` },
+    url: '/api/workers',
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
     success: workers => {
-      const $w = $('#worker-list').empty();
-      workers.forEach(w => {
-        const status = w.currentTaskCount > 0
-          ? `Working on ${w.currentTaskCount} tasks`
-          : 'Free';
-        $w.append(`
-          <li class="collection-item">
-            <strong>${w.username}</strong><br/>
-            Email: ${w.email}<br/>
-            Status: ${status}
-          </li>
+      const $list = $('#worker-list').empty();
+  workers.forEach(w => {
+    const display = w.name || w.displayName || w.email;
+    const status  = w.currentTaskCount > 0
+      ? `Working on ${w.currentTaskCount} task${w.currentTaskCount > 1 ? 's' : ''}`
+      : 'Free';
+    $list.append(`
+      <li class="collection-item">
+        <strong>${display}</strong><br>
+        Email: ${w.email}<br>
+        Status: ${status}
+      </li>
         `);
       });
     },
     error: err => console.error('Error loading workers', err)
   });
 }
+
 
 // ----------------------
 // Document Ready
@@ -383,84 +282,8 @@ $(document).ready(function() {
     $('#notification-count').hide().text('0');
   });
 
-  // Socket.io if available
-  if (typeof io === 'function') {
-    const socket = io();
+  loadWorkers();     // fills the “Workers” sidebar
+  loadAdminTasks();  // populates #admin-task-list with existing tasks
 
-    // existing real‑time handlers plus notif logic
-    socket.on('task:created', task => {
-      addNotification(`New task “${task.title}” created.`);
-      loadAdminTasks();
-      loadWorkerTasks();
-    });
-    socket.on('task:updated', task => {
-      addNotification(`Task “${task.title}” updated.`);
-      loadAdminTasks();
-      loadWorkerTasks();
-    });
-    socket.on('task:deleted', ({ title }) => {
-      console.log('received delete evt for:', title);
-      addNotification(`Task "${title}" deleted.`);
-      loadAdminTasks();
-      loadWorkerTasks();
-    });
-    
-  }
 
-  // Initial loads
-  loadWorkerTasks();
-  loadAdminTasks();
-  loadWorkers();
-
-  // UI bindings
-  $('#filter_btn').click(() =>
-    loadWorkerTasks($('#filter_input').val())
-  );
-
-  // Auth forms
-  $('#loginForm').submit(function(e) {
-    e.preventDefault();
-    $.post('/api/auth/login', {
-      email:    $('#login_email').val(),
-      password: $('#login_password').val()
-    })
-    .done(data => {
-      localStorage.setItem('jwtToken', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      window.location.href = data.user.role === 'admin'
-        ? '/pages/admin-dashboard.html'
-        : '/pages/worker-dashboard.html';
-    })
-    .fail(() => alert('Login failed'));
-  });
-
-  $('#registerForm').submit(function(e) {
-    e.preventDefault();
-    $.post('/api/auth/register', {
-      username: $('#register_username').val(),
-      email:    $('#register_email').val(),
-      password: $('#register_password').val(),
-      role:     $('#register_role').val()
-    })
-    .done(() => window.location.href = '/pages/login.html')
-    .fail(() => alert('Registration failed'));
-  });
-
-  $('#forgotForm').submit(function(e) {
-    e.preventDefault();
-    $.post('/api/auth/forgot', { email: $('#forgot_email').val() })
-      .done(res => alert(res.message))
-      .fail(xhr => alert('Error: ' + xhr.responseJSON.error));
-  });
-
-  $('#resetForm').submit(function(e) {
-    e.preventDefault();
-    const token = new URLSearchParams(window.location.search).get('token');
-    $.post(`/api/auth/reset/${token}`, { password: $('#newPassword').val() })
-      .done(res => {
-        alert(res.message);
-        window.location.href = '/pages/login.html';
-      })
-      .fail(xhr => alert('Error: ' + xhr.responseJSON.error));
-  });
 });

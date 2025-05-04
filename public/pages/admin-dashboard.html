@@ -11,7 +11,7 @@
 <body>
   <nav>
     <div class="nav-wrapper">
-      <a href="#" class="brand-logo center">Admin Dashboard</a>
+      <a href="#" class="brand-logo center"> Dashboard</a>
       <ul id="nav-mobile" class="right hide-on-med-and-down">
         <li><a href="/pages/landing.html">Home</a></li>
         <li><a href="/pages/login.html">Logout</a></li>
@@ -81,50 +81,7 @@
       <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
     </div>
   </div>
-  <!-- Edit Task Modal -->
-<div id="editTaskModal" class="modal">
-  <div class="modal-content form-container">
-    <h4>Edit Task</h4>
-    <div class="row">
-      <form id="editTaskForm" class="col s12">
-        <!-- Hidden field to store task id (optional, or use modal data attribute) -->
-        <input type="hidden" id="edit_task_id">
-        
-        <div class="row">
-          <div class="input-field col s12">
-            <input id="edit_task_title" type="text" class="validate">
-            <label for="edit_task_title">Title</label>
-          </div>
-        </div>
-        <div class="row">
-          <div class="input-field col s12">
-            <textarea id="edit_task_description" class="materialize-textarea"></textarea>
-            <label for="edit_task_description">Description</label>
-          </div>
-        </div>
-        <div class="row">
-          <div class="input-field col s12">
-            <input id="edit_task_dueDate" type="date" class="validate">
-            <label for="edit_task_dueDate">Due Date</label>
-          </div>
-        </div>
-        <div class="row">
-          <div class="input-field col s12">
-            <input id="edit_task_assignedTo" type="text" class="validate">
-            <label for="edit_task_assignedTo">Assigned To (Email or Username)</label>
 
-          </div>
-        </div>
-        <button class="btn waves-effect waves-light custom-btn" type="submit">Update
-          
-        </button>
-      </form>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
-  </div>
-</div>
 
 <div class="container"></div>
 <footer class="page-footer"> 
@@ -136,8 +93,7 @@
 <!-- Materialize JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <!-- Socket.io client -->
-<script src="/socket.io/socket.io.js"></script>
-<!-- Your combined script file -->
+
 <script src="../js/scripts.js"></script>
 </body>
 </html>

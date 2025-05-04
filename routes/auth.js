@@ -135,7 +135,7 @@ router.post('/login', async (req, res) => {
         username: user.name || user.displayName || 'User',
         email: user.email
       },
-      redirectTo: '/pages/landing.html'
+      redirectTo: '/pages/admin-dashboard.html'
     });
 
   } catch (err) {

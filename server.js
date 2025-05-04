@@ -30,10 +30,15 @@ const authRoutes = require('./routes/auth');
 // Mount routes
 app.use('/api/auth', authRoutes);
 
+
+
 // TASKS
 const tasksRouter = require('./routes/tasks');
 app.use('/api/tasks', tasksRouter);
 
+// workers
+const workersRouter = require('./routes/workers');
+app.use('/api/workers', workersRouter);
 
 
 // Route to serve the landing page
