@@ -2,62 +2,63 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Login - Community Task Board</title>
+  <title>Login - CommunityConnect</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="../css/styles.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 <body id="login-page">
-  <nav>
-    <div class="nav-wrapper">
-      <ul id="nav-mobile" class="right hide-on-med-and-down">
-        <a href="#" class="brand-logo center">Community Task Board</a>
-      </ul>
-    </div>
-  </nav>
 
-  <div class="login-form-wrapper">
-    <div class="container">
-      <div class="form-box">
-        <h4 class="center-align">Login</h4>
-        <!-- Add error display div -->
-        <div id="login-error" class="card-panel red lighten-4 red-text text-darken-4" style="display: none;"></div>
-        <form id="loginForm" class="col s12">
-          <div class="row">
-            <div class="input-field col s12">
-              <input id="login_email" type="email" class="validate">
-              <label for="login_email">Email address*</label>
-            </div>
-          </div>
-          <div class="row">
-            <div class="input-field col s12">
-              <input id="login_password" type="password" class="validate">
-              <label for="login_password">Password*</label>
-            </div>
-          </div>
-          <button class="btn waves-effect waves-light submit-btn" type="submit">Log In</button>
-          <div class="center-align">
-            <a href="/pages/forgot-password.html">Forgot your password?</a>
-          </div>
-          <div class="center-align" style="margin-top: 20px;">
-            <a href="/api/auth/google" class="btn red darken-1">
-              <i class="material-icons left">account_circle</i> Login with Gmail
-            </a>
-          </div>
-        </form>
-        <div class="row">
-          <div class="col s12 center-align">
-            <p>Don't have an account? <a href="/pages/register.html">Register here</a></p>
-          </div>
+  <!-- Header Section -->
+  <header>
+    <h4>Welcome Back to</h4>
+    <h2 style="font-weight: 700;">CommunityConnect 👋</h2>
+  </header>
+
+  <!-- Login Form Section -->
+  <section class="form-section">
+    <div class="form-box z-depth-1">
+      <h5 class="center-align">Login to your account</h5>
+      
+      <!-- Error Message -->
+      <div id="login-error" class="card-panel red lighten-4 red-text text-darken-4" style="display: none;"></div>
+      
+      <!-- Login Form -->
+      <form id="loginForm">
+        <div class="input-field">
+          <input id="login_email" type="email" class="validate" required>
+          <label for="login_email">Email address*</label>
         </div>
+
+        <div class="input-field">
+          <input id="login_password" type="password" class="validate" required>
+          <label for="login_password">Password*</label>
+        </div>
+
+        <button class="btn waves-effect waves-light indigo lighten-1 submit-btn" type="submit">Log In</button>
+
+        <div class="center-align" style="margin-top: 10px;">
+          <a href="/pages/forgot-password.html">Forgot your password?</a>
+        </div>
+
+        <div class="center-align">
+          <a href="/api/auth/google" class="btn red darken-1 google-btn">
+            <i class="material-icons left">account_circle</i> Login with Gmail
+          </a>
+        </div>
+      </form>
+
+      <div class="center-align" style="margin-top: 20px;">
+        <p>Don't have an account? <a href="/pages/register.html">Register here</a></p>
       </div>
     </div>
-  </div> 
+  </section>
 
-  <footer class="page-footer">
-    <div class="container">
-      © 2025 Community Task Board
+  <!-- Footer -->
+  <footer class="page-footer grey darken-3">
+    <div class="container center-align white-text">
+      © 2025 CommunityConnect
     </div>
   </footer>
 
