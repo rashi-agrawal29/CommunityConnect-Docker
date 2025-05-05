@@ -183,3 +183,19 @@ h5.center-align {
 .back-btn i.material-icons {
   margin-right: 4px;
 }
+
+.task-section {
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.ongoing-tasks {
+  background-color: #e3f2fd;
+  border: 2px solid #90caf9;
+}
+
+.available-tasks {
+  background-color: #f1f8e9;
+  border: 2px solid #c5e1a5;
+}

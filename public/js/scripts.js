@@ -69,7 +69,6 @@ document.addEventListener('DOMContentLoaded', function () {
           // Store token and user info in localStorage
           localStorage.setItem('jwtToken', data.token);
           localStorage.setItem('user', JSON.stringify(data.user));
-          alert('Login successful!');
           // Redirect to the landing page after successful login
           window.location.href = data.redirectTo;
         } else {
