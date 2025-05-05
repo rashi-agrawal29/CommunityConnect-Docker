@@ -1,5 +1,5 @@
+// Register form submission handler
 document.addEventListener('DOMContentLoaded', function () {
-  // Register form submission handler
   const registerForm = document.getElementById('registerForm');
   if (registerForm) {
     registerForm.addEventListener('submit', async function (e) {
@@ -202,7 +202,6 @@ function loadAdminTasks() {
   });
 }
 
-
 $('#addTaskForm').submit(function(e) {
   e.preventDefault();
   const token       = localStorage.getItem('jwtToken');
@@ -260,6 +259,114 @@ function loadWorkers() {
   });
 }
 
+function editTask(taskId) {
+  const token = localStorage.getItem('jwtToken');
+
+  // Fetch existing task data
+  $.ajax({
+    method: 'GET',
+    url: `/api/tasks/${taskId}`,
+    headers: { Authorization: `Bearer ${token}` },
+    success: task => {
+      $('#task_title').val(task.title);
+      $('#task_description').val(task.description);
+      $('#task_dueDate').val(task.dueDate.split('T')[0]);
+      $('#task_assignedTo').val(task.assignedTo?.email || task.assignedTo?.name || '');
+      M.updateTextFields();
+
+      // Change submit behavior
+      $('#addTaskForm').off('submit').on('submit', function (e) {
+        e.preventDefault();
+
+        const payload = {
+          title: $('#task_title').val().trim(),
+          description: $('#task_description').val().trim(),
+          dueDate: $('#task_dueDate').val(),
+        };
+
+        const assignedTo = $('#task_assignedTo').val().trim();
+        if (assignedTo) {
+          payload.assignedTo = assignedTo;
+        }
+
+        $.ajax({
+          method: 'PUT',
+          url: `/api/tasks/${taskId}`,
+          headers: { Authorization: `Bearer ${token}` },
+          contentType: "application/json",
+          data: JSON.stringify(payload),
+          success: () => {
+            $('#modalAddTask').modal('close');
+            loadAdminTasks();
+            loadWorkerTasks();
+            resetAddTaskForm();
+          },
+          error: err => {
+            console.error('Error updating task', err);
+            alert('Failed to update task.');
+          }
+        });
+      });
+
+      $('#modalAddTask').modal('open');
+    },
+    error: err => {
+      console.error('Failed to load task for editing:', err);
+      alert('Failed to load task data.');
+    }
+  });
+}
+
+function resetAddTaskForm() {
+  $('#addTaskForm')[0].reset();
+  $('#addTaskForm').off('submit').on('submit', defaultAddHandler);
+}
+
+function defaultAddHandler(e) {
+  e.preventDefault();
+  const token = localStorage.getItem('jwtToken');
+  const title = $('#task_title').val().trim();
+  const description = $('#task_description').val().trim();
+  const dueDate = $('#task_dueDate').val();
+  const assignVal = $('#task_assignedTo').val().trim();
+
+  const payload = { title, description, dueDate };
+  if (assignVal) payload.assignedTo = assignVal;
+
+  $.ajax({
+    method: "POST",
+    url: "/api/tasks",
+    headers: { Authorization: `Bearer ${token}` },
+    contentType: "application/json",
+    data: JSON.stringify(payload),
+    success: () => {
+      // Close the Add-Task modal
+      $('#modalAddTask').modal('close');
+
+      // Then reload both dashboards
+      loadAdminTasks();
+      loadWorkerTasks();
+    },
+    error: err => console.error('Error creating task', err)
+  });
+}
+
+function deleteTask(taskId) {
+  const confirmed = confirm('Are you sure you want to delete this task?');
+  if (!confirmed) return;
+
+  const token = localStorage.getItem('jwtToken');
+  $.ajax({
+    method: 'DELETE',
+    url: `/api/tasks/${taskId}`,
+    headers: { Authorization: `Bearer ${token}` },
+    success: () => {
+      loadAdminTasks();
+      loadWorkerTasks();
+    },
+    error: err => console.error('Error deleting task', err)
+  });
+}
 
 // ----------------------
 // Document Ready
@@ -284,6 +391,4 @@ $(document).ready(function() {
 
   loadWorkers();     // fills the “Workers” sidebar
   loadAdminTasks();  // populates #admin-task-list with existing tasks
-
-
 });
