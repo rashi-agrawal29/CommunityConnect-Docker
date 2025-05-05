@@ -62,4 +62,45 @@ exports.createTask = async (req, res) => {
 }
 };
 
+exports.updateTask = async (req, res) => {
+  try {
+    const taskId = req.params.id;
+    const updateData = req.body;
+
+    if (updateData.assignedTo && !/^[0-9a-fA-F]{24}$/.test(updateData.assignedTo)) {
+      let assignedUser;
+      if (updateData.assignedTo.includes('@')) {
+        assignedUser = await User.findOne({ email: updateData.assignedTo });
+      } else {
+        assignedUser = await User.findOne({ name: updateData.assignedTo }) ||
+                       await User.findOne({ displayName: updateData.assignedTo });
+      }
+      updateData.assignedTo = assignedUser ? assignedUser._id : undefined;
+    }
+
+    const updatedTask = await Task.findByIdAndUpdate(taskId, updateData, { new: true })
+      .populate('createdBy', 'name displayName email')
+      .populate('assignedTo', 'name displayName email');
+
+    if (!updatedTask)
+      return res.status(404).json({ error: 'Task not found.' });
+
+    res.json(updatedTask);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update task.', details: err.message });
+  }
+};
+
+exports.deleteTask = async (req, res) => {
+  try {
+    const taskId = req.params.id;
+    const deletedTask = await Task.findByIdAndDelete(taskId);
+    if (!deletedTask)
+      return res.status(404).json({ error: 'Task not found.' });
+
+    res.json({ message: 'Task deleted successfully.' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete task.', details: err.message });
+  }
+};
 

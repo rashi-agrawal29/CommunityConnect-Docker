@@ -41,7 +41,7 @@ const workersRouter = require('./routes/workers');
 app.use('/api/workers', workersRouter);
 
 
-// Route to serve the landing page
+// Route to serve the login page
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'pages', 'login.html'));
 });

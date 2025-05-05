@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hiring Dashboard - CommunityConnect</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  
+  <!-- Materialize CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  
+  <!-- Google Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <a href="/pages/landing.html" class="back-btn">
+      <i class="material-icons">arrow_back</i> Go Back
+    </a>
+    <h2>Hiring Dashboard</h2>
+    <p>Hire someone at CommunityConnect</p>
+    <!-- Top Right Icons -->
+    <div class="top-right-icons">
+      <!-- Notification Bell -->
+      <a href="#!" class="notification-icon">
+        <i class="material-icons">notifications</i>
+      </a>
+      <!-- Logout Button -->
+      <a href="/pages/login.html" class="logout-icon">
+        <i class="material-icons">exit_to_app</i> Logout
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="row">
+    <!-- Left Column: Worker List -->
+    <div class="col s12 m3">
+      <h5>Workers</h5>
+      <ul id="worker-list" class="collection z-depth-1">
+        <!-- Worker list items will be injected here -->
+      </ul>
+    </div>
+
+    <!-- Right Column: Manage Tasks -->
+    <div class="col s12 m9">
+      <h5>Manage Tasks</h5>
+      <a class="waves-effect waves-light btn modal-trigger custom-btn" href="#modalAddTask">Add New Task</a>
+      <div id="admin-task-list" class="row" style="margin-top: 2rem;">
+        <!-- Task cards will be rendered here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Structure -->
+  <div id="modalAddTask" class="modal">
+    <div class="modal-content">
+      <h4>Add Task</h4>
+      <form id="addTaskForm" class="col s12">
+        <div class="input-field">
+          <input id="task_title" type="text" required>
+          <label for="task_title">Title</label>
+        </div>
+        <div class="input-field">
+          <textarea id="task_description" class="materialize-textarea" required></textarea>
+          <label for="task_description">Description</label>
+        </div>
+        <div class="input-field">
+          <input id="task_dueDate" type="date" required>
+          <label for="task_dueDate">Due Date</label>
+        </div>
+        <div class="input-field">
+          <input id="task_assignedTo" type="text">
+          <label for="task_assignedTo">Assigned To (Email or Username)</label>
+        </div>
+        <button type="submit" class="btn waves-effect waves-light custom-btn">Submit</button>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-close waves-effect btn-flat">Close</a>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="page-footer grey darken-3">
+    <div class="container center-align white-text">
+      © 2025 CommunityConnect
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="../js/scripts.js"></script>
+</body>
+</html>
