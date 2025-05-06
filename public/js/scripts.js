@@ -175,13 +175,20 @@ function renderTaskCard($container, isMine, task) {
 
 function loadAdminTasks() {
   const token = localStorage.getItem('jwtToken');
+  const user  = JSON.parse(localStorage.getItem('user') || '{}');
   $.ajax({
     method: "GET",
     url: "/api/tasks",
     headers: { Authorization: `Bearer ${token}` },
     success: tasks => {
-      const $list = $('#admin-task-list').empty();
-      tasks.forEach(task => {
+      // only keep tasks this user created
+      const myTasks = tasks.filter(t => {
+      const creatorId = t.createdBy._id || t.createdBy.id;
+      return creatorId === user.id;
+    });
+  
+    const $list = $('#admin-task-list').empty();
+    myTasks.forEach(task => {
         const due = new Date(task.dueDate).toLocaleDateString();
         const asg = task.assignedTo
   ? (task.assignedTo.name || task.assignedTo.displayName)
