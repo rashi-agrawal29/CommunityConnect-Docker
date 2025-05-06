@@ -33,18 +33,21 @@
       <a href="/pages/login.html" class="logout-icon">
         <i class="material-icons">exit_to_app</i> Logout
       </a>
+      <span id="navWelcome" class="nav-welcome" style="margin-left:1rem; font-weight:500;">
+        <!-- will be replaced by script -->
+      </span>
     </div>
   </header>
 
   <!-- Main Content -->
   <div class="row">
     <!-- Left Column: Worker List -->
-    <div class="col s12 m3">
+    <!-- <div class="col s12 m3">
       <h5>Workers</h5>
       <ul id="worker-list" class="collection z-depth-1">
-        <!-- Worker list items will be injected here -->
+       
       </ul>
-    </div>
+    </div> -->
 
     <!-- Right Column: Manage Tasks -->
     <div class="col s12 m9">
@@ -77,6 +80,8 @@
           <input id="task_assignedTo" type="text">
           <label for="task_assignedTo">Assigned To (Email or Username)</label>
         </div>
+        <div id="taskError" class="red-text" style="display:none; margin-bottom:1rem;"></div>
+
         <button type="submit" class="btn waves-effect waves-light custom-btn">Submit</button>
       </form>
     </div>

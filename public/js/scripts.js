@@ -1,5 +1,15 @@
 // Register form submission handler
 document.addEventListener('DOMContentLoaded', function () {
+
+  // Grab the user object saved on login
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+  // If we have a name or username, show it
+  const navWelcome = document.getElementById('navWelcome');
+  if (navWelcome && user.username) {
+    navWelcome.innerText = `Welcome, ${user.username}`;
+  }
+
   const registerForm = document.getElementById('registerForm');
   if (registerForm) {
     registerForm.addEventListener('submit', async function (e) {
@@ -226,7 +236,11 @@ $('#addTaskForm').submit(function(e) {
       loadAdminTasks();
       loadWorkerTasks();
     },
-    error: err => console.error('Error creating task', err)
+    error: xhr => {
+      // pull the message from your 400 response, or fallback
+      const msg = xhr.responseJSON?.error || 'Failed to create task.';
+      $('#taskError').text(msg).show();
+    }
   });
 });
 
@@ -375,6 +389,8 @@ $(document).ready(function() {
   $('select').formSelect();
   $('.modal').modal();
 
+  
+
   // 🔔 NOTIFS: initialize the notifications dropdown
   const dropdowns = document.querySelectorAll('.dropdown-trigger');
   M.Dropdown.init(dropdowns, {
@@ -387,7 +403,7 @@ $(document).ready(function() {
     notifications = [];
     $('#notification-count').hide().text('0');
   });
-
+  loadWorkerTasks();
   loadWorkers();     // fills the “Workers” sidebar
   loadAdminTasks();  // populates #admin-task-list with existing tasks
 });
