@@ -1,8 +1,8 @@
 require('dotenv').config();
+require('./config/passport');
 const express = require('express');
 const path = require('path');
 const passport = require('passport');
-require('./config/passport');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const cors = require('cors');
@@ -26,11 +26,16 @@ app.use(passport.session());
 
 // Import routes
 const authRoutes = require('./routes/auth');
+const authReset = require('./routes/authReset');
+
 
 // Mount routes
+
 app.use('/api/auth', authRoutes);
+app.use('/api/auth', authReset);
 
 
+const authController = require('./controllers/authController');
 
 // TASKS
 const tasksRouter = require('./routes/tasks');
@@ -45,6 +50,7 @@ app.use('/api/workers', workersRouter);
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'pages', 'login.html'));
 });
+
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/CTB')
