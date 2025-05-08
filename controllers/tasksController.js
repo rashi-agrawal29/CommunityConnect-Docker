@@ -1,6 +1,6 @@
 const Task = require('../models/taskModel');
 const User = require('../models/userModel');  
-
+const { isFutureDate } = require('../public/js/dateUtils');
 
 
 exports.listTasks = async (req, res) => {
@@ -36,7 +36,10 @@ exports.createTask = async (req, res) => {
   try {
     // 1) Build the base payload, including who created it:
     const taskData = { ...req.body, createdBy: req.user.id };
-
+    // Enforce future due dates:
+    if (req.body.dueDate && !isFutureDate(req.body.dueDate)) {
+      return res.status(400).json({ error: 'Due date must be in the future.' });
+    }
     // 2) Normalize “assignedTo”:
     if (!taskData.assignedTo || taskData.assignedTo.trim() === '') {
       delete taskData.assignedTo;
@@ -56,10 +59,11 @@ exports.createTask = async (req, res) => {
     return res.status(201).json(newTask);
 
   } catch (err) {
-    console.log(err);
     console.error('Error creating task:', err);
-    return res.status(500).json({ error: 'Failed to create task.', details: err.message});
-}
+    return res
+      .status(500)
+      .json({ error: 'Failed to create task.', details: err.message });
+  }
 };
 
 exports.updateTask = async (req, res) => {

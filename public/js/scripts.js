@@ -1,5 +1,15 @@
 // Register form submission handler
 document.addEventListener('DOMContentLoaded', function () {
+
+  // Grab the user object saved on login
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+  // If we have a name or username, show it
+  const navWelcome = document.getElementById('navWelcome');
+  if (navWelcome && user.username) {
+    navWelcome.innerText = `Welcome, ${user.username}`;
+  }
+
   const registerForm = document.getElementById('registerForm');
   if (registerForm) {
     registerForm.addEventListener('submit', async function (e) {
@@ -165,13 +175,20 @@ function renderTaskCard($container, isMine, task) {
 
 function loadAdminTasks() {
   const token = localStorage.getItem('jwtToken');
+  const user  = JSON.parse(localStorage.getItem('user') || '{}');
   $.ajax({
     method: "GET",
     url: "/api/tasks",
     headers: { Authorization: `Bearer ${token}` },
     success: tasks => {
-      const $list = $('#admin-task-list').empty();
-      tasks.forEach(task => {
+      // only keep tasks this user created
+      const myTasks = tasks.filter(t => {
+        const creatorId = t.createdBy?._id || t.createdBy?.id;
+        return creatorId === user.id;
+      });
+  
+    const $list = $('#admin-task-list').empty();
+    myTasks.forEach(task => {
         const due = new Date(task.dueDate).toLocaleDateString();
         const asg = task.assignedTo
   ? (task.assignedTo.name || task.assignedTo.displayName)
@@ -226,7 +243,11 @@ $('#addTaskForm').submit(function(e) {
       loadAdminTasks();
       loadWorkerTasks();
     },
-    error: err => console.error('Error creating task', err)
+    error: xhr => {
+      // pull the message from your 400 response, or fallback
+      const msg = xhr.responseJSON?.error || 'Failed to create task.';
+      $('#taskError').text(msg).show();
+    }
   });
 });
 
@@ -375,6 +396,8 @@ $(document).ready(function() {
   $('select').formSelect();
   $('.modal').modal();
 
+  
+
   // 🔔 NOTIFS: initialize the notifications dropdown
   const dropdowns = document.querySelectorAll('.dropdown-trigger');
   M.Dropdown.init(dropdowns, {
@@ -387,7 +410,7 @@ $(document).ready(function() {
     notifications = [];
     $('#notification-count').hide().text('0');
   });
-
+  loadWorkerTasks();
   loadWorkers();     // fills the “Workers” sidebar
   loadAdminTasks();  // populates #admin-task-list with existing tasks
 });
