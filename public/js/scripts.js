@@ -413,4 +413,24 @@ $(document).ready(function() {
   loadWorkerTasks();
   loadWorkers();     // fills the “Workers” sidebar
   loadAdminTasks();  // populates #admin-task-list with existing tasks
+
+  $('#forgotForm').submit(function(e) {
+    e.preventDefault();
+    $.post('/api/auth/forgot', { email: $('#forgot_email').val() })
+      .done(res => alert(res.message))
+      .fail(xhr => alert('Error: ' + xhr.responseJSON.error));
+  });
+
+  $('#resetForm').submit(function(e) {
+    e.preventDefault();
+    const token = new URLSearchParams(window.location.search).get('token');
+    $.post(`/api/auth/reset/${token}`, { password: $('#newPassword').val() })
+      .done(res => {
+        alert(res.message);
+        window.location.href = '/pages/login.html';
+      })
+      .fail(xhr => alert('Error: ' + xhr.responseJSON.error));
+  });
+
+
 });
