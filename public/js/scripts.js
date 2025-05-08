@@ -101,8 +101,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function loadWorkerTasks(filter = "") {
   const token = localStorage.getItem('jwtToken');
-  const user  = JSON.parse(localStorage.getItem('user'));
-  if (user?.username) {
+  const user  = JSON.parse(localStorage.getItem('user') || '{}');
+  if (user.username) {
     $('#welcomeMessage').text(`Welcome, ${user.username}`);
   }
 
@@ -111,7 +111,7 @@ function loadWorkerTasks(filter = "") {
     url: "/api/tasks",
     headers: { Authorization: `Bearer ${token}` },
     success: tasks => {
-      // My Tasks
+      // My Tasks (assigned to me, not completed)
       const myTasks = tasks.filter(task => {
         if (!task.assignedTo) return false;
         const id = task.assignedTo._id
@@ -120,13 +120,22 @@ function loadWorkerTasks(filter = "") {
         return id === user.id && task.status !== 'Completed';
       });
 
-      // Available Tasks
-      const available = tasks.filter(t =>
-        !t.assignedTo && t.status !== 'Completed'
-      );
+      // Available Tasks (unassigned, not completed, not created by me)
+      const available = tasks.filter(task => {
+        // must be unassigned
+        if (task.assignedTo) return false;
+        // must not be created by me
+        const creatorId = task.createdBy._id
+          ? task.createdBy._id.toString()
+          : task.createdBy;
+        if (creatorId === user.id) return false;
+        // must still be open
+        return task.status !== 'Completed';
+      });
 
       const fl = filter.toLowerCase();
-      const filteredMy = myTasks.filter(t =>
+
+      const filteredMy    = myTasks.filter(t =>
         t.title.toLowerCase().includes(fl) ||
         t.description.toLowerCase().includes(fl)
       );
@@ -135,9 +144,11 @@ function loadWorkerTasks(filter = "") {
         t.description.toLowerCase().includes(fl)
       );
 
-      // Render
+      // Render My Tasks
       const $myList = $('#my-task-list').empty();
       filteredMy.forEach(renderTaskCard.bind(null, $myList, true));
+
+      // Render Available Tasks
       const $availList = $('#worker-task-list').empty();
       filteredAvail.forEach(renderTaskCard.bind(null, $availList, false));
     },
