@@ -20,9 +20,13 @@
     <!-- Top Right Icons -->
     <div class="top-right-icons">
       <!-- Notification Bell -->
-      <a href="#!" class="notification-icon">
-        <i class="material-icons">notifications</i>
-      </a>
+      <div class="notification-wrapper" style="position: relative; display: inline-block;">
+        <a href="#!" class="notification-icon">
+          <i class="material-icons">notifications</i>
+          <span id="notification-count" class="notification-badge">0</span>
+        </a>
+        <div id="notification-modal-placeholder"></div>
+      </div>      
       <!-- Logout Button -->
       <a href="/pages/login.html" class="logout-icon">
         <i class="material-icons">exit_to_app</i> Logout

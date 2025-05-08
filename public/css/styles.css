@@ -39,6 +39,21 @@ header, nav.nav-wrapper {
   font-size: 24px;
 }
 
+.notification-badge {
+  position: absolute;
+  top: -4px;
+  right: 0px;
+  background: red;
+  color: white;
+  font-size: 10px;
+  border-radius: 30%;
+  width: 16px;
+  height: 16px;
+  text-align: center;
+  line-height: 16px;
+  display: none; /* hidden by default */
+}
+
 /* Logout Button */
 .logout-icon {
   color: white;
