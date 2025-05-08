@@ -147,18 +147,26 @@ function loadWorkerTasks(filter = "") {
       // Render My Tasks
       const $myList = $('#my-task-list').empty();
       filteredMy.forEach(renderTaskCard.bind(null, $myList, true));
+       if (filteredMy.length === 0) {
+        $myList.html('<p class="center grey-text">You have no ongoing tasks.</p>');
+      }
 
       // Render Available Tasks
       const $availList = $('#worker-task-list').empty();
       filteredAvail.forEach(renderTaskCard.bind(null, $availList, false));
+      if (filteredAvail.length === 0) {
+        $availList.html('<p class="center grey-text">No available tasks right now.</p>');
+      }
     },
     error: err => console.error('Error loading tasks', err)
   });
 }
 
-// Renders a task card into $container; isMine toggles “Working/Completed” vs “Accept”
+// Renders a task card into $container; isMine toggles “Working/Completed” vs “Accept” for workers
 function renderTaskCard($container, isMine, task) {
-  const due = new Date(task.dueDate).toLocaleDateString();
+const due = new Date(task.dueDate).toLocaleDateString();
+
+  // 1) Actions
   let actions = '';
   if (isMine) {
     actions = `
@@ -166,23 +174,42 @@ function renderTaskCard($container, isMine, task) {
       <a href="#" onclick="updateTaskStatus('${task._id}','Completed')">Completed</a>
     `;
   } else {
-    actions = `<button class="btn-flat apply-btn" style="color:#039be5;" data-task-id="${task._id}">Apply</button>`;
+    actions = `<button class="btn-flat apply-btn" data-task-id="${task._id}">Apply</button>`;
   }
 
+  // 2) Badges
+  const statusBadge = `<span class="badge badge--${task.status.toLowerCase()}">${task.status}</span>`;
+  const dueBadge    = `<span class="badge badge--due">Due ${due}</span>`;
+
+  // 3) Assigned-to label
+  const asg = task.assignedTo
+    ? (task.assignedTo.name || task.assignedTo.displayName || 'Unknown')
+    : 'Unassigned';
+
+  const initials = (asg && asg[0]) ? asg.slice(0,2).toUpperCase() : '?';
+  const avatar   = `<div class="user-avatar">${initials}</div>`;
+
+  // 4) Render the card
   $container.append(`
     <div class="col s12 ${isMine ? '' : 'm6'}">
       <div class="card">
         <div class="card-content">
-          <span class="card-title">${task.title}</span>
+          <div style="display:flex; align-items:center; margin-bottom:.5rem">
+            ${avatar}
+            <span class="card-title" style="margin:0">${task.title}</span>
+          </div>
           <p>${task.description}</p>
-          <p>Due: ${due}</p>
-          <p>Status: ${task.status}</p>
+          <p>${dueBadge} ${statusBadge}</p>
         </div>
-        <div class="card-action">${actions}</div>
+        <div class="card-action" style="display:flex; align-items:center; gap:1rem">
+          ${actions}
+          <i class="material-icons left">person</i>${asg}
+        </div>
       </div>
     </div>
   `);
 }
+
 
 function loadAdminTasks() {
   const token = localStorage.getItem('jwtToken');
@@ -199,35 +226,49 @@ function loadAdminTasks() {
       });
   
     const $list = $('#admin-task-list').empty();
-    myTasks.forEach(task => {
-        const due = new Date(task.dueDate).toLocaleDateString();
-        const asg = task.assignedTo
-  ? (task.assignedTo.name || task.assignedTo.displayName)
-  : 'Unassigned';
-
-        $list.append(`
-          <div class="col s12 m6 l4">
-            <div class="card">
-              <div class="card-content">
-                <span class="card-title">${task.title}</span>
-                <p>${task.description}</p>
-                <p>Due: ${due}</p>
-                <p>Status: ${task.status}</p>
-                <p>Assigned to: ${asg}</p>
-              </div>
-              <div class="card-action">
-                <a href="#" onclick="editTask('${task._id}')">Edit</a>
-                <a href="#" onclick="deleteTask('${task._id}')">Delete</a>
-                <a href="#" onclick="updateTaskStatus('${task._id}','Completed')">Completed</a>
-              </div>
-            </div>
-          </div>
-        `);
-      });
+    myTasks.forEach(task => renderTaskCardAdmin($list, task));
     },
     error: err => console.error('Error loading admin tasks', err)
   });
 }
+
+function renderTaskCardAdmin($container, task) {
+  const dueDate = new Date(task.dueDate).toLocaleDateString();
+  // badges
+  const statusBadge = `<span class="badge badge--${task.status.toLowerCase()}">${task.status}</span>`;
+  const dueBadge    = `<span class="badge badge--due">Due ${dueDate}</span>`;
+  // assignee
+  const assigneeName = task.assignedTo
+    ? (task.assignedTo.displayName || task.assignedTo.name || task.assignedTo.email)
+    : 'Unassigned';
+  // avatar initial
+  const avatarLetter = assigneeName.charAt(0).toUpperCase();
+  const avatar = `<div class="avatar">${avatarLetter}</div>`;
+  // action links
+  const actions = `
+    <a href="#" onclick="editTask('${task._id}')">Edit</a>
+    <a href="#" onclick="deleteTask('${task._id}')">Delete</a>
+    <a href="#" onclick="updateTaskStatus('${task._id}','Completed')">Completed</a>
+  `;
+
+  $container.append(`
+    <div class="col s12 m6 l4">
+      <div class="card task-card-admin">
+        <div class="card-content">
+          <div class="card-header">
+            ${avatar}
+            <span class="card-title">${task.title}</span>
+          </div>
+          <p>${task.description}</p>
+          <p>${statusBadge} ${dueBadge}</p>
+          <p>Assigned to: ${assigneeName}</p>
+        </div>
+        <div class="card-action">${actions}</div>
+      </div>
+    </div>
+  `);
+}
+
 
 $('#addTaskForm').submit(function(e) {
   e.preventDefault();

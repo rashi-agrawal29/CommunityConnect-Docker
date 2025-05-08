@@ -216,3 +216,182 @@ h5.center-align {
 }
 
 
+/* wrap each section in a .task-section */
+.task-section {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+}
+
+.task-section .section-header {
+  padding: 1rem 1.5rem;
+  color: #fff;
+  font-size: 1.25rem;
+}
+
+/* two distinct headers */
+.ongoing-tasks .section-header {
+  background: linear-gradient(135deg, #64b5f6, #2196f3);
+}
+.available-tasks .section-header {
+  background: linear-gradient(135deg, #aed581, #8bc34a);
+}
+
+/* push the cards slightly up under the header */
+.ongoing-tasks .card,
+.available-tasks .card {
+  margin: 1rem 1.5rem 1.5rem;
+}
+
+
+.card {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+
+
+.badge {
+  display: inline-block;
+  font-size: .75rem;
+  padding: .2em .6em;
+  border-radius: 999px;
+  color: #fff;
+  margin-right: .5rem;
+}
+.badge--due    { background: #50cfef; } 
+.badge--open   { background: #25db95; } 
+/* .badge--working{ background: #941c1c; } 
+.badge--done   { background: #66BB6A; }  */
+
+.card-content p { line-height: 1.5; margin: .5em 0; }
+.card-title { font-size: 1.3rem; font-weight: 500; }
+@media (min-width: 992px) {
+  #worker-task-list .col.l4,
+  #my-task-list      .col.l4 {
+    flex: 0 0 33.333%;
+    max-width: 33.333%;
+  }
+}
+
+.task-section { opacity: 0; animation: fadeIn 0.5s forwards; }
+@keyframes fadeIn { to { opacity: 1; } }
+
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #ccc;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  margin-right: .75rem;
+  flex-shrink: 0;
+}
+
+
+.hiring-tasks .section-header {
+  background: linear-gradient(135deg, #aed581, #8bc34a);
+  color: #aed581;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  font-size: 1.3rem;
+}
+
+/* shrink the button a bit to match the header height */
+.hiring-tasks .btn-small {
+  font-size: 0.85rem;
+  padding: 0 0.75rem;
+  height: 32px;
+  line-height: 32px;
+}
+
+/* give the listing area a little breathing room */
+.hiring-tasks #admin-task-list {
+  padding: 1rem;
+}
+
+/* Center content & limit width */
+.section-wrapper {
+  max-width: 1200px;
+  margin: 2rem auto;      /* vertical spacing + auto-center */
+  padding: 0 1rem;
+}
+
+/* Re-use the green header look, but give it a bit more padding & radius */
+.task-section .section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .75rem 1rem;
+  border-radius: 4px 4px 0 0;
+  color: #fff;
+}
+
+/* Make the button a little tighter */
+.task-section .btn-small {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+}
+
+/* Give the whole panel a soft card background + border */
+.hiring-tasks {
+  background: #f9f9f9;
+  border: 1px solid #c8e6c9;      /* match your green accent */
+  border-radius: 4px;
+}
+
+
+/* ─── Shared “pill” badge styles ───────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 0.25em 0.75em;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1;
+  vertical-align: middle;
+  margin-left: 0.5rem;
+}
+
+/* status pills */
+.badge--open {
+  background-color: #2ecc71; /* same green */
+  color: white;
+}
+.badge--due {
+  background-color: #5bc0de; /* same light-blue */
+  color: white;
+}
+
+/* ─── Circular avatar “initial” ───────────────────────── */
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #ccc;
+  color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.85rem;
+  margin-right: 0.75rem;
+}
+
+/* ─── Tidy up the admin card header ────────────────────── */
+.task-card-admin .card-header {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.75rem;
+  margin-bottom: 0.75rem;
+}
