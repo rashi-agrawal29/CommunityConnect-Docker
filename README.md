@@ -2,7 +2,7 @@
 This is a project for unit SIT725.
 
 
-## 🔐 Authentication Overview
+## Authentication Overview
 
 This project supports two types of user authentication:
 
@@ -11,9 +11,9 @@ This project supports two types of user authentication:
 
 ---
 
-### ✅ 1. Email/Password Registration with Verification
+### 1. Email/Password Registration with Verification
 
-#### 📌 Registration Endpoint
+#### Registration Endpoint
 
 ```http
 POST /api/auth/register
@@ -36,7 +36,7 @@ POST /api/auth/register
 * Sends a verification email to the user
 * User must verify the email before logging in
 
-#### 📌 Email Verification
+#### Email Verification
 
 ```http
 GET /api/auth/verify/:token
@@ -46,7 +46,7 @@ GET /api/auth/verify/:token
 * Verifies the user and marks their `isVerified` flag as `true`.
 * Redirects to the login page on success.
 
-#### 📌 Login Endpoint
+#### Login Endpoint
 
 ```http
 POST /api/auth/login
@@ -69,11 +69,11 @@ POST /api/auth/login
 
 ---
 
-### 🔁 2. Google OAuth 2.0 Authentication
+### 2. Google OAuth 2.0 Authentication
 
 Uses `passport-google-oauth20` strategy.
 
-#### 📌 Google Login Initiation
+#### Google Login Initiation
 
 ```http
 GET /api/auth/google
@@ -81,7 +81,7 @@ GET /api/auth/google
 
 Redirects the user to Google's login page.
 
-#### 📌 Google OAuth Callback
+#### Google OAuth Callback
 
 ```http
 GET /api/auth/google/callback
@@ -95,7 +95,7 @@ GET /api/auth/google/callback
 
 ## 🛠 Setup Instructions
 
-### 🔑 Environment Variables Required
+### Environment Variables Required
 
 Create a `.env` file with the following:
 
