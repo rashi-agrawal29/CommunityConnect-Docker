@@ -183,9 +183,9 @@ function loadAdminTasks() {
     success: tasks => {
       // only keep tasks this user created
       const myTasks = tasks.filter(t => {
-      const creatorId = t.createdBy._id || t.createdBy.id;
-      return creatorId === user.id;
-    });
+        const creatorId = t.createdBy?._id || t.createdBy?.id;
+        return creatorId === user.id;
+      });
   
     const $list = $('#admin-task-list').empty();
     myTasks.forEach(task => {
