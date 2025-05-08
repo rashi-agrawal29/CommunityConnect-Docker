@@ -155,7 +155,7 @@ function renderTaskCard($container, isMine, task) {
       <a href="#" onclick="updateTaskStatus('${task._id}','Completed')">Completed</a>
     `;
   } else {
-    actions = `<a href="#" onclick="acceptTask('${task._id}')">Accept</a>`;
+    actions = `<button class="btn-flat apply-btn" style="color:#039be5;" data-task-id="${task._id}">Apply</button>`;
   }
 
   $container.append(`
@@ -388,32 +388,104 @@ function deleteTask(taskId) {
   });
 }
 
-// ----------------------
-// Document Ready
-// ----------------------
+function applyForTask(taskId, btnElement) {
+  const token = localStorage.getItem('jwtToken');
+
+  $.ajax({
+    method: 'PUT',
+    url: `/api/workers/apply/${taskId}`,
+    headers: { Authorization: `Bearer ${token}` },
+    success: () => {
+      $(btnElement).text('Applied').prop('disabled', true);
+    },
+    error: err => console.error('Failed to apply for task', err)
+  });
+}
+
 $(document).ready(function() {
   // Materialize init
   $('select').formSelect();
   $('.modal').modal();
 
-  
-
-  // 🔔 NOTIFS: initialize the notifications dropdown
+  // NOTIFS: initialize the notifications dropdown
   const dropdowns = document.querySelectorAll('.dropdown-trigger');
   M.Dropdown.init(dropdowns, {
     coverTrigger: false,
     constrainWidth: false
   });
 
-  // 🔔 NOTIFS: clear badge when user clicks the bell
-  $('.dropdown-trigger').on('click', () => {
-    notifications = [];
-    $('#notification-count').hide().text('0');
+  let dropdownLoaded = false;
+  $('.notification-icon').on('click', function (e) {
+    e.stopPropagation(); // Prevent closing when clicking the bell
+
+    if (!dropdownLoaded) {
+      $('#notification-modal-placeholder').load('/components/notificationModal.html', function () {
+        dropdownLoaded = true;
+        showNotifications();
+        $('#notificationDropdown').fadeIn(200);
+      });
+    } else {
+      const dropdown = $('#notificationDropdown');
+      dropdown.is(':visible') ? dropdown.fadeOut(200) : dropdown.fadeIn(200);
+      showNotifications();
+    }
   });
+
+  // Hide dropdown when clicking outside
+  $(document).on('click', function (e) {
+    if (!$(e.target).closest('.notification-dropdown, .notification-icon').length) {
+      $('#notificationDropdown').fadeOut(200);
+    }
+  });
+
+  // Function to fetch and show notifications
+  function showNotifications() {
+    const token = localStorage.getItem('jwtToken');
+    $.ajax({
+      method: 'GET',
+      url: '/api/workers/notifications',
+      headers: { Authorization: `Bearer ${token}` },
+      success: notes => {
+        const $list = $('#notificationList').empty();
+        const $badge = $('#notification-count');
+  
+        // Update badge count
+        if (notes.length > 0) {
+          $badge.text(notes.length).show();
+        } else {
+          $badge.hide();
+        }
+  
+        if (notes.length === 0) {
+          $list.append('<li class="collection-item">No notifications</li>');
+        } else {
+          notes.forEach(note => {
+            const time = new Date(note.createdAt).toLocaleString();
+            $list.append(`
+              <li class="collection-item">
+                <strong>${note.message || 'No message'}</strong><br>
+                <small class="grey-text">${time}</small>
+              </li>
+            `);
+          });
+        }
+      },
+      error: err => {
+        console.error('Notification load error', err);
+      }
+    });
+  }
   loadWorkerTasks();
   loadWorkers();     // fills the “Workers” sidebar
   loadAdminTasks();  // populates #admin-task-list with existing tasks
+  showNotifications();
 
+  $(document).on('click', '.apply-btn', function () {
+    const taskId = $(this).data('task-id');
+    const btn = this;
+    applyForTask(taskId, btn);
+  });
+  
   $('#forgotForm').submit(function(e) {
     e.preventDefault();
     $.post('/api/auth/forgot', { email: $('#forgot_email').val() })
@@ -431,6 +503,4 @@ $(document).ready(function() {
       })
       .fail(xhr => alert('Error: ' + xhr.responseJSON.error));
   });
-
-
 });
