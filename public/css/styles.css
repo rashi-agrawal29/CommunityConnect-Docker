@@ -395,3 +395,85 @@ h5.center-align {
   padding-bottom: 0.75rem;
   margin-bottom: 0.75rem;
 }
+
+
+
+/* Header Container */
+.header-container {
+  background: linear-gradient(to right, #6a11cb, #2575fc); /* Blue gradient */
+  padding: 20px 0;
+  color: white;
+}
+
+/* Flexbox for Header Content */
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Header Text Styling */
+.header-text h4 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.header-text h2 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+/* Header Links Styling */
+.header-links a {
+  margin-left: 15px;
+  font-size: 1rem;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+}
+
+.header-links a:hover {
+  text-decoration: underline;
+}
+
+/* Hero (full-screen) */
+.hero-image {
+  background: url('../images/hero-bg.jpg') center/cover no-repeat;
+  height: 250vh;
+}
+.hero-headline {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+}
+.hero-sub {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* Benefits cards */
+
+.benefits .card-image img {
+  height: 180px;
+  object-fit: cover;
+}
+.benefits .card-title {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  .hero-headline { font-size: 2rem; }
+  .hero-sub { font-size: 1rem; }
+  .carousel .carousel-item img { height: 250px; }
+}
+
+.benefits .card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
