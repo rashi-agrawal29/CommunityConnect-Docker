@@ -174,7 +174,12 @@ const due = new Date(task.dueDate).toLocaleDateString();
       <a href="#" onclick="updateTaskStatus('${task._id}','Completed')">Completed</a>
     `;
   } else {
-    actions = `<button class="btn-flat apply-btn" data-task-id="${task._id}">Apply</button>`;
+    const appliedTasks = JSON.parse(localStorage.getItem('appliedTasks') || '[]');
+    const isApplied = appliedTasks.includes(task._id);
+
+    actions = isApplied
+      ? `<button class="btn-flat apply-btn" disabled>Applied</button>`
+      : `<button class="btn-flat apply-btn" style="color:#039be5;" data-task-id="${task._id}">Apply</button>`;
   }
 
   // 2) Badges
@@ -449,6 +454,13 @@ function applyForTask(taskId, btnElement) {
     headers: { Authorization: `Bearer ${token}` },
     success: () => {
       $(btnElement).text('Applied').prop('disabled', true);
+
+      // Save applied task ID in localStorage
+      let appliedTasks = JSON.parse(localStorage.getItem('appliedTasks') || '[]');
+      if (!appliedTasks.includes(taskId)) {
+        appliedTasks.push(taskId);
+        localStorage.setItem('appliedTasks', JSON.stringify(appliedTasks));
+      }
     },
     error: err => console.error('Failed to apply for task', err)
   });
