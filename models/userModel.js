@@ -9,23 +9,34 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true }, // name
   isVerified: { type: Boolean, default: false }, // Verify if the email is confirmed
   verificationToken: { type: String }, // Store the verification token
-   resetPasswordToken:   String,
-   resetPasswordExpires: Date,
+  resetPasswordToken: String,
+  resetPasswordExpires: Date,
 });
-// Hash password if provided and modified
-userSchema.pre('save', async function(next) {
+
+// Hash password if modified and not already hashed
+userSchema.pre('save', async function (next) {
   if (!this.isModified('password') || !this.password) return next();
+
   try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+    // Prevent double hashing (bcrypt hashes typically start with $2a$ or $2b$)
+    if (!this.password.startsWith('$2')) {
+      const salt = await bcrypt.genSalt(10);
+      this.password = await bcrypt.hash(this.password, salt);
+      console.log('Password was hashed successfully.');
+    } else {
+      console.log('Password is already hashed. Skipping hashing.');
+    }
     next();
   } catch (err) {
+    console.error('Error hashing password:', err);
     next(err);
   }
 });
 
-userSchema.methods.comparePassword = function(candidatePassword) {
+// Compare hashed password
+userSchema.methods.comparePassword = function (candidatePassword) {
   if (!this.password) return false;
   return bcrypt.compare(candidatePassword, this.password);
 };
+
 module.exports = mongoose.model('User', userSchema);
