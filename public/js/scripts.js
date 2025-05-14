@@ -122,17 +122,18 @@ function loadWorkerTasks(filter = "") {
 
       // Available Tasks (unassigned, not completed, not created by me)
       const available = tasks.filter(task => {
-        // must be unassigned
         if (task.assignedTo) return false;
-        // must not be created by me
-        const creatorId = task.createdBy._id
+
+        // skip if createdBy is missing
+        if (!task.createdBy) return false;
+
+        const creatorId = typeof task.createdBy === 'object' && task.createdBy._id
           ? task.createdBy._id.toString()
           : task.createdBy;
         if (creatorId === user.id) return false;
         // must still be open
         return task.status !== 'Completed';
       });
-
       const fl = filter.toLowerCase();
 
       const filteredMy    = myTasks.filter(t =>
