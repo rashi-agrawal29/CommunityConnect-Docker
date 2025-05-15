@@ -176,7 +176,9 @@ router.get('/google/callback',
       }
 
       // Successful login or registration, redirect to the landing page
-      res.redirect('/pages/landing.html');
+      const token = generateToken(existingUser);
+
+      res.redirect(`/pages/landing.html?token=${token}`);
     } catch (err) {
       console.log(err);
       res.redirect('/pages/login.html'); // Redirect to login page if an error occurs

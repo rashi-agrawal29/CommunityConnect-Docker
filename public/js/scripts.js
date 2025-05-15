@@ -1,6 +1,19 @@
 // Register form submission handler
 document.addEventListener('DOMContentLoaded', function () {
 
+  // Capture token from URL (Google Login)
+  const params = new URLSearchParams(window.location.search);
+  const tokenFromUrl = params.get('token');
+
+  if (tokenFromUrl) {
+    // Store the token in localStorage
+    localStorage.setItem('jwtToken', tokenFromUrl);
+
+    // Clean up URL to remove the token from the address bar
+    const urlWithoutToken = window.location.origin + window.location.pathname;
+    window.history.replaceState({}, document.title, urlWithoutToken);
+  }
+
   // Grab the user object saved on login
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
