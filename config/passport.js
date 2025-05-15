@@ -22,6 +22,7 @@ passport.use(
           displayName: profile.displayName,
           email: profile.emails[0].value,
           name: profile.displayName || `${profile.name.givenName} ${profile.name.familyName}`, // Fallback if displayName is missing
+          isVerified: true
         });
 
         await newUser.save();
