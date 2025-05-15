@@ -119,6 +119,10 @@ node server.js
 ```
 
 ---
+## 📊 Frontend Figma Clickable design
+
+![image](https://github.com/user-attachments/assets/0eac06c6-0104-421b-9625-77c3e9421049)
+
 
 ## 📊 Backend Architecture Diagram
 
