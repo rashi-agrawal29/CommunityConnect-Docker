@@ -45,6 +45,8 @@ app.use('/api/tasks', tasksRouter);
 const workersRouter = require('./routes/workers');
 app.use('/api/workers', workersRouter);
 
+// expose GET /logout at top level
+app.use('/', require('./routes/auth'));
 
 
 // Route to serve the home page
