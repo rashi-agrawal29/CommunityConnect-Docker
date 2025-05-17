@@ -27,13 +27,13 @@ app.use(passport.session());
 // Import routes
 const authRoutes = require('./routes/auth');
 const authReset = require('./routes/authReset');
-
+const commentRoutes = require('./routes/comments');
 
 // Mount routes
 
 app.use('/api/auth', authRoutes);
 app.use('/api/auth', authReset);
-
+app.use('/api/comments', commentRoutes);
 
 const authController = require('./controllers/authController');
 
@@ -44,6 +44,7 @@ app.use('/api/tasks', tasksRouter);
 // workers
 const workersRouter = require('./routes/workers');
 app.use('/api/workers', workersRouter);
+
 
 
 // Route to serve the home page
