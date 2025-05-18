@@ -479,98 +479,68 @@ h5.center-align {
 }
 
 
-/* ------------------------------------------------------------------
-   Comments Section (inside each task card)
------------------------------------------------------------------- */
+/* ─── Fix comment layout inside cards ───────────────────────────────────── */
+.card .card-action {
+  /* override inline styles from scripts.js */
+  display: flex !important;
+  align-items: center !important;
+  gap: 1rem;
+  flex-wrap: nowrap !important;
+  white-space: nowrap;
+}
+
+/* style the hidden panel */
 .comments-section {
-  background: #fafafa;
-  border-top: 1px solid #e0e0e0;
+  display: none;                /* stays hidden until you toggle */
+  width: 100%;
   padding: 1rem;
-  margin-top: 1rem;
-  border-radius: 0 0 4px 4px;
+  background: #f9f9f9;
+  border-top: 1px solid #e0e0e0;
 }
 
-/* The list of comments */
-.comments-section .comment-list {
-  max-height: 200px;
+/* constrain the list */
+.comment-list {
+  max-height: 120px;
   overflow-y: auto;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
-/* Individual comment item */
-.comment-item {
-  display: flex;
-  align-items: flex-start;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #eee;
-}
-.comment-item:last-child {
-  border-bottom: none;
-}
-.comment-item > div:first-child {
-  flex: 1;
-}
-.comment-item strong {
-  color: #333;
-}
-.comment-item small {
-  color: #999;
-  display: block;
-  margin-top: 0.25rem;
-}
-
-/* Delete button for your own comments */
-.comment-delete {
-  border: none;
-  background: transparent;
-  padding: 0.25rem;
-  cursor: pointer;
-}
-.comment-delete:hover {
-  color: #c62828;
-}
-
-/* Toggle “Comments” button styling */
-.comment-toggle {
-  margin-left: 1rem;
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  color: #039be5;
-}
-.comment-toggle:hover {
-  background: none;
-  color: #0277bd;
-}
-
-/* Comment input form at bottom */
+/* form layout */
 .comment-form {
   display: flex;
-  gap: 0.5rem;
+  align-items: center;
+  margin-top: 0.5rem;
 }
 .comment-input {
   flex: 1;
-  padding: 0 1rem;
-  height: 2.2rem;
-  border: 1px solid #ccc;
-  border-radius: 3px;
+  margin-right: 0.5rem;
 }
-.comment-input:focus {
-  border-color: #039be5;
-  box-shadow: 0 0 0 1px #039be5;
+
+/* keep icons aligned */
+.comment-toggle i,
+.comment-form i {
+  vertical-align: middle;
 }
-.comment-submit {
-  border: none;
-  background: #039be5;
-  color: white;
-  padding: 0 1rem;
-  border-radius: 3px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
+
+/* ─── Force each ongoing‐task column to full width ───────────────────────── */
+.ongoing-tasks #my-task-list {
+  display: flex !important;          /* make the row a flex container */
+  flex-direction: column !important; /* stack cards vertically */
+  gap: 0rem !important;              /* space between cards */
+  align-items: center !important;  /* ensure left-alignment */
 }
-.comment-submit i {
-  font-size: 1.2rem;
+
+.ongoing-tasks #my-task-list .col {
+  width: 90% !important;           /* let content size the card */
+  max-width: 90% !important;      /* same as your Hiring Dashboard cards */
+  margin: 0 !important;             /* flush to the left padding of the panel */
 }
-.comment-submit:hover {
-  background: #0277bd;
+
+/* ─── Constrain and center the Ongoing-Tasks panel ───────────────────── */
+.ongoing-tasks {          /* for the back button */
+  width: 100% !important;           /* let content width define size */
+  max-width: 95% !important;      /* match your card width + panel padding */
+  margin: 2 auto !important;       /* center the panel */
+  border-radius: 8px !important; /* same as your Hiring Dashboard */
+  padding: 1rem 0.5rem !important;  /* adjust top/bottom and side padding */
 }

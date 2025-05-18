@@ -18,11 +18,14 @@ document.addEventListener('DOMContentLoaded', function () {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   // If we have a name or username, show it
+  
   const navWelcome = document.getElementById('navWelcome');
   if (navWelcome && user.username) {
     navWelcome.innerText = `Welcome, ${user.username}`;
   }
+  
 
+  
   const registerForm = document.getElementById('registerForm');
   if (registerForm) {
     registerForm.addEventListener('submit', async function (e) {
@@ -62,9 +65,11 @@ document.addEventListener('DOMContentLoaded', function () {
         errorBox.innerText = 'Failed to connect to server.';
       }
     });
-  }
+    }
+  
 
   // Login form submission handler
+  
   const loginForm = document.getElementById('loginForm');
   if (loginForm) {
     loginForm.addEventListener('submit', async function (e) {
@@ -106,6 +111,22 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   }
+  
+
+    // the logout handler:
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', async e => {
+        e.preventDefault();
+        // clear client storage
+        localStorage.removeItem('jwtToken');
+        localStorage.removeItem('user');
+        // hit the server logout endpoint
+        await fetch('/logout', { method: 'GET', credentials: 'include' });
+        // then redirect
+        window.location.href = '/pages/login.html';
+      });
+    } 
 });
 
 // ----------------------
