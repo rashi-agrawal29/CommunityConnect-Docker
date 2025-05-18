@@ -1,6 +1,7 @@
 const Task = require('../models/taskModel');
 const User = require('../models/userModel');  
 const { isFutureDate } = require('../public/js/dateUtils');
+const Notification = require('../models/notificationModel');
 
 
 exports.listTasks = async (req, res) => {
@@ -88,7 +89,22 @@ exports.updateTask = async (req, res) => {
 
     if (!updatedTask)
       return res.status(404).json({ error: 'Task not found.' });
+      // 🔔 New “assignment” notification
+    if (updateData.assignedTo) {
+      // grab the assignee’s record so you can show their name/email if needed
+      const assignee = await User.findById(updatedTask.assignedTo);
 
+      const msg = `${req.user.name} (${req.user.email}) has assigned you the task '${updatedTask.title}'`;
+
+      await Notification.create({
+        recipient: assignee._id,
+        sender:    req.user.id,
+        task:      updatedTask._id,
+        type:      'assignment',
+        message:   msg
+      });
+    }
+    
     res.json(updatedTask);
   } catch (err) {
     res.status(500).json({ error: 'Failed to update task.', details: err.message });
