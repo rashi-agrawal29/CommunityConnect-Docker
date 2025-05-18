@@ -3,8 +3,6 @@ const mongoose = require('mongoose');
 const taskSchema = new mongoose.Schema({
   title:       { type: String, required: true },
   description: { type: String, required: true },
-  image:       { type: String },
-  link:        { type: String },
   dueDate:     { type: Date},
   status:      { type: String, default: 'Open' },
   createdBy:   { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
