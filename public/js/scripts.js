@@ -176,9 +176,9 @@ function loadWorkerTasks(filter = "") {
   });
 }
 
-// Renders a task card into $container; isMine toggles “Working/Completed” vs “Accept” for workers
+// Renders a task card into $container; isMine toggles “Working/Completed” vs “Apply”
 function renderTaskCard($container, isMine, task) {
-const due = new Date(task.dueDate).toLocaleDateString();
+  const due = new Date(task.dueDate).toLocaleDateString();
 
   // 1) Actions
   let actions = '';
@@ -188,29 +188,27 @@ const due = new Date(task.dueDate).toLocaleDateString();
       <a href="#" onclick="updateTaskStatus('${task._id}','Completed')">Completed</a>
     `;
   } else {
-    const appliedTasks = JSON.parse(localStorage.getItem('appliedTasks') || '[]');
+    const appliedTasks = JSON.parse(localStorage.getItem('appliedTasks')) || [];
     const isApplied = appliedTasks.includes(task._id);
-
     actions = isApplied
       ? `<button class="btn-flat apply-btn" disabled>Applied</button>`
       : `<button class="btn-flat apply-btn" style="color:#039be5;" data-task-id="${task._id}">Apply</button>`;
   }
 
   // 2) Badges
-  const statusBadge = `<span class="badge badge--${task.status.toLowerCase()}">${task.status}</span>`;
+  const statusBadge = `<span class="badge badge-${task.status.toLowerCase()}">${task.status}</span>`;
   const dueBadge    = `<span class="badge badge--due">Due ${due}</span>`;
 
-  // 3) Assigned-to label
+  // 3) Avatar
   const asg = task.assignedTo
-    ? (task.assignedTo.name || task.assignedTo.displayName || 'Unknown')
+    ? (task.assignedTo.name || task.assignedTo.displayName || task.assignedTo.email)
     : 'Unassigned';
-
-  const initials = (asg && asg[0]) ? asg.slice(0,2).toUpperCase() : '?';
+  const initials = asg.slice(0,2).toUpperCase();
   const avatar   = `<div class="user-avatar">${initials}</div>`;
 
-  // 4) Render the card
+  // 4) Append the card (notice where we inject our comment-toggle button and hidden panel)
   $container.append(`
-    <div class="col s12 ${isMine ? '' : 'm6'}">
+    <div class="col s12 ${isMine ? '' : 'm6'} l4">
       <div class="card">
         <div class="card-content">
           <div style="display:flex; align-items:center; margin-bottom:.5rem">
@@ -222,12 +220,35 @@ const due = new Date(task.dueDate).toLocaleDateString();
         </div>
         <div class="card-action" style="display:flex; align-items:center; gap:1rem">
           ${actions}
+          <!-- ⬇️  comment-toggle button: -->
+          <button class="btn-flat comment-toggle" data-task-id="${task._id}">
+            <i class="material-icons left">chat_bubble_outline</i>
+            Comments
+          </button>
           <i class="material-icons left">person</i>${asg}
         </div>
+
+        <!-- ⬇️ comment panel, hidden by default: -->
+        <div class="comments-section" data-task-id="${task._id}" style="display:none; padding:1rem 1.5rem;">
+          <div class="comment-list"></div>
+          <div class="comment-form" style="display:flex; align-items:center; margin-top:.5rem;">
+            <input
+              type="text"
+              class="comment-input"
+              placeholder="Add a comment…"
+              style="flex:1; margin-right:.5rem;"
+            >
+            <button class="btn-flat comment-submit" data-task-id="${task._id}">
+              <i class="material-icons">send</i>
+            </button>
+          </div>
+        </div>
+
       </div>
     </div>
   `);
 }
+
 
 
 function loadAdminTasks() {
@@ -270,9 +291,10 @@ function renderTaskCardAdmin($container, task) {
     <a href="#" onclick="updateTaskStatus('${task._id}','Completed')">Completed</a>
   `;
 
-  $container.append(`
+$container.append(`
     <div class="col s12 m6 l4">
       <div class="card task-card-admin">
+
         <div class="card-content">
           <div class="card-header">
             ${avatar}
@@ -282,7 +304,48 @@ function renderTaskCardAdmin($container, task) {
           <p>${statusBadge} ${dueBadge}</p>
           <p>Assigned to: ${assigneeName}</p>
         </div>
-        <div class="card-action">${actions}</div>
+
+        <div class="card-action">
+          ${actions}
+
+          <!-- Comment toggle button -->
+          <button
+            class="btn-flat comment-toggle"
+            data-task-id="${task._id}"
+            style="margin-left:1rem;">
+            <i class="material-icons left" style="font-size:1.1rem">
+              chat_bubble_outline
+            </i>
+            Comments
+          </button>
+        </div>
+
+        <!-- Comments section (hidden by default) -->
+        <div
+          class="comments-section"
+          data-task-id="${task._id}"
+          style="display:none; margin:1rem;">
+          
+          <div class="comment-list"></div>
+          
+          <div class="comment-form" style="display:flex; align-items:center; margin-top:0.5rem;">
+            <input
+              type="text"
+              class="comment-input"
+              placeholder="Add a comment…"
+              style="flex:1; margin-right:0.5rem;"
+            >
+            <button
+              class="btn-flat comment-submit"
+              data-task-id="${task._id}"
+            >
+              <i class="material-icons" style="vertical-align:middle">
+                send
+              </i>
+            </button>
+          </div>
+        </div>
+
       </div>
     </div>
   `);
@@ -479,6 +542,108 @@ function applyForTask(taskId, btnElement) {
     error: err => console.error('Failed to apply for task', err)
   });
 }
+
+$(function() {
+  const token = localStorage.getItem('jwtToken');
+  const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+
+  // Toggle comment section open/closed
+  $(document).on('click', '.comment-toggle', function(e) {
+    e.preventDefault();
+    const taskId = $(this).data('task-id');
+    const $section = $(`.comments-section[data-task-id="${taskId}"]`);
+
+    if ($section.is(':visible')) {
+      $section.hide();
+    } else {
+      // first load comments from server
+      loadComments(taskId);
+      $section.show();
+    }
+  });
+
+  // Submit a new comment
+  $(document).on('click', '.comment-submit', function(e) {
+    e.preventDefault();
+    const taskId = $(this).data('task-id');
+    const $section = $(`.comments-section[data-task-id="${taskId}"]`);
+    const $input = $section.find('.comment-input');
+    const text = $input.val().trim();
+    if (!text) return;
+
+    $.ajax({
+      method: 'POST',
+  url: `/api/comments/task/${taskId}`,
+  headers: { Authorization: `Bearer ${token}` },
+  contentType: 'application/json',
+  data: JSON.stringify({ description: text }), 
+    })
+    .done(() => {
+      $input.val('');          // clear
+      loadComments(taskId);     // reload list
+    })
+    .fail(err => console.error('Comment create error', err));
+  });
+
+  // Delete a comment (only shown on your own)
+  $(document).on('click', '.comment-delete', function(e) {
+    e.preventDefault();
+    const commentId = $(this).data('comment-id');
+    const taskId    = $(this).data('task-id');
+
+    $.ajax({
+      method: 'DELETE',
+      url: `/api/comments/${commentId}`,
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .done(() => loadComments(taskId))
+    .fail(err => console.error('Comment delete error', err));
+  });
+
+  // Helper: fetch & render comments for one task
+  function loadComments(taskId) {
+    const $list = $(`.comments-section[data-task-id="${taskId}"] .comment-list`);
+    $list.empty();
+    $.ajax({
+      method: 'GET',
+      url: `/api/comments/task/${taskId}`,
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .done(comments => {
+      if (!comments.length) {
+        $list.append(`<p style="font-style:italic;color:#666">No comments yet.</p>`);
+        return;
+      }
+      comments.forEach(c => {
+        // build delete button if it's yours
+        const canDelete = c.createdBy._id === currentUser.id;
+        const deleteBtn = canDelete
+          ? `<button class="btn-flat comment-delete"
+                       data-comment-id="${c._id}"
+                       data-task-id="${taskId}"
+                       style="font-size:.9rem;color:#e53935">
+                <i class="material-icons tiny">delete</i>
+             </button>`
+          : '';
+
+        $list.append(`
+          <div class="comment-item" style="display:flex;align-items:center;margin:4px 0;">
+            <div style="flex:1;">
+              <strong>${c.createdBy.displayName || c.createdBy.name}:</strong>
+              <span style="margin-left:.4rem;">${c.description}</span><br>
+              <small style="color:#999;">${new Date(c.createdAt).toLocaleString()}</small>
+            </div>
+            ${deleteBtn}
+          </div>
+        `);
+      });
+    })
+    .fail(err => console.error('Comment load error', err));
+  }
+});
+
+
+
 
 $(document).ready(function() {
   // Materialize init

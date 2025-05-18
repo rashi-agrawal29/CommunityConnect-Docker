@@ -477,3 +477,100 @@ h5.center-align {
   flex-direction: column;
   height: 100%;
 }
+
+
+/* ------------------------------------------------------------------
+   Comments Section (inside each task card)
+------------------------------------------------------------------ */
+.comments-section {
+  background: #fafafa;
+  border-top: 1px solid #e0e0e0;
+  padding: 1rem;
+  margin-top: 1rem;
+  border-radius: 0 0 4px 4px;
+}
+
+/* The list of comments */
+.comments-section .comment-list {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
+
+/* Individual comment item */
+.comment-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+}
+.comment-item:last-child {
+  border-bottom: none;
+}
+.comment-item > div:first-child {
+  flex: 1;
+}
+.comment-item strong {
+  color: #333;
+}
+.comment-item small {
+  color: #999;
+  display: block;
+  margin-top: 0.25rem;
+}
+
+/* Delete button for your own comments */
+.comment-delete {
+  border: none;
+  background: transparent;
+  padding: 0.25rem;
+  cursor: pointer;
+}
+.comment-delete:hover {
+  color: #c62828;
+}
+
+/* Toggle “Comments” button styling */
+.comment-toggle {
+  margin-left: 1rem;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  color: #039be5;
+}
+.comment-toggle:hover {
+  background: none;
+  color: #0277bd;
+}
+
+/* Comment input form at bottom */
+.comment-form {
+  display: flex;
+  gap: 0.5rem;
+}
+.comment-input {
+  flex: 1;
+  padding: 0 1rem;
+  height: 2.2rem;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+.comment-input:focus {
+  border-color: #039be5;
+  box-shadow: 0 0 0 1px #039be5;
+}
+.comment-submit {
+  border: none;
+  background: #039be5;
+  color: white;
+  padding: 0 1rem;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+.comment-submit i {
+  font-size: 1.2rem;
+}
+.comment-submit:hover {
+  background: #0277bd;
+}
