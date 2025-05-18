@@ -712,14 +712,14 @@ $(document).ready(function() {
       success: notes => {
         const $list = $('#notificationList').empty();
         const $badge = $('#notification-count');
-  
+
         // Update badge count
         if (notes.length > 0) {
           $badge.text(notes.length).show();
         } else {
           $badge.hide();
         }
-  
+
         if (notes.length === 0) {
           $list.append('<li class="collection-item">No notifications</li>');
         } else {
@@ -733,10 +733,27 @@ $(document).ready(function() {
             `);
           });
         }
+
+        // Ensure button exists and bind event
+        $('#clearNotificationsBtn').off('click').on('click', function () {
+          clearAllNotifications();
+        });
       },
-      error: err => {
-        console.error('Notification load error', err);
-      }
+      error: err => console.error('Notification load error', err)
+    });
+  }
+
+  function clearAllNotifications() {
+    const token = localStorage.getItem('jwtToken');
+    $.ajax({
+      method: 'DELETE',
+      url: '/api/workers/notifications',
+      headers: { Authorization: `Bearer ${token}` },
+      success: () => {
+        $('#notificationList').html('<li class="collection-item">No notifications</li>');
+        $('#notification-count').hide();
+      },
+      error: err => console.error('Failed to clear notifications', err)
     });
   }
   loadWorkerTasks();
