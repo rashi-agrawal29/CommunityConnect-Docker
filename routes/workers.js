@@ -95,4 +95,15 @@ router.get('/notifications', authenticate, async (req, res) => {
   }
 });
 
+// DELETE /api/workers/notifications
+// Clears all notifications for the current user
+router.delete('/notifications', authenticate, async (req, res) => {
+  try {
+    await Notification.deleteMany({ recipient: req.user.id });
+    res.json({ message: 'All notifications cleared successfully.' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to clear notifications', details: err.message });
+  }
+});
+
 module.exports = router;
