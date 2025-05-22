@@ -1,6 +1,8 @@
 // controllers/commentController.js
 const Comment = require('../models/commentModel');
 const mongoose = require('mongoose');
+const Task = require('../models/taskModel');
+const Notification = require('../models/notificationModel');
 
 // GET all comments for a given task
 exports.getComments = async (req, res, next) => {
@@ -27,9 +29,23 @@ exports.createComment = async (req, res, next) => {
     // await the promise returned by populate()
     await comment.populate('createdBy', 'name displayName')
 
-    res.status(201).json(comment)
+   // Fetch task to notify the creator
+    const task = await Task.findById(req.params.taskId).populate('createdBy', '_id name');
+
+    // Avoid notifying yourself
+    if (task && task.createdBy._id.toString() !== req.user.id) {
+      await Notification.create({
+        recipient: task.createdBy._id,
+        sender: req.user.id,
+        task: task._id,
+        message: `A new comment has been added to your task '${task.title}'`,
+        type: 'general'
+      });
+    }
+
+    res.status(201).json(comment);
   } catch (err) {
-    next(err)
+    next(err);
   }
 }
 
