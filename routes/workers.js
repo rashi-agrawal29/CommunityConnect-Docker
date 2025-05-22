@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require('../models/userModel');
 const Task = require('../models/taskModel');
 const Notification = require('../models/notificationModel');
+const { sendNotification } = require('../config/notificationHelper');
 const authenticate = require('../middlewares/authMiddleware');
 
 // GET /api/workers
@@ -52,12 +53,13 @@ router.put('/apply/:taskId', authenticate, async (req, res) => {
 
     const senderName = req.user.name || req.user.displayName || req.user.email || 'Someone';
 
-    await Notification.create({
+    await sendNotification({
       recipient: task.createdBy._id,
       sender: userId,
       task: task._id,
       type: 'application',
-      message: `${senderName} (${req.user.email}) has applied for your task '${task.title}'`
+      message: `${senderName} (${req.user.email}) has applied for your task '${task.title}'`,
+      io: req.app.get('io')
     });    
 
     res.json({ message: 'Task applied successfully', task });

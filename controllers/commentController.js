@@ -1,6 +1,7 @@
 // controllers/commentController.js
 const Comment = require('../models/commentModel');
 const mongoose = require('mongoose');
+const { sendNotification } = require('../config/notificationHelper');
 const Task = require('../models/taskModel');
 const Notification = require('../models/notificationModel');
 
@@ -34,12 +35,13 @@ exports.createComment = async (req, res, next) => {
 
     // Avoid notifying yourself
     if (task && task.createdBy._id.toString() !== req.user.id) {
-      await Notification.create({
+      await sendNotification({
         recipient: task.createdBy._id,
         sender: req.user.id,
         task: task._id,
-        message: `A new comment has been added to your task '${task.title}'`,
-        type: 'general'
+        message: `A new comment has been added to your task '${task.name}'`,
+        type: 'general',
+        io: req.app.get('io')
       });
     }
 

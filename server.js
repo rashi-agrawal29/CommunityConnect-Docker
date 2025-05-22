@@ -6,8 +6,29 @@ const passport = require('passport');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const cors = require('cors');
+const http = require('http');
+const socketIO = require('socket.io');
 
 const app = express();
+const server = http.createServer(app);
+
+const io = socketIO(server); // bind Socket.IO to HTTP server
+
+app.set('io', io); // make io available in req.app.get('io')
+
+// Socket connection handler
+io.on('connection', (socket) => {
+  console.log('User connected:', socket.id);
+
+  socket.on('register', (userId) => {
+    socket.join(userId); // join room by user ID
+    console.log(`User ${userId} joined room ${userId}`);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected:', socket.id);
+  });
+});
 
 // Middleware
 app.use(express.static(path.join(__dirname, 'public')));
@@ -62,6 +83,6 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/CTB')
 
 // Start the server
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
