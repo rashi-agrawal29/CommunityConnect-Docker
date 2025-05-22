@@ -1,6 +1,7 @@
 const Task = require('../models/taskModel');
 const User = require('../models/userModel');  
 const { isFutureDate } = require('../public/js/dateUtils');
+const { sendNotification } = require('../config/notificationHelper');
 const Notification = require('../models/notificationModel');
 
 
@@ -96,12 +97,13 @@ exports.updateTask = async (req, res) => {
 
       const msg = `${req.user.name} (${req.user.email}) has assigned you the task '${updatedTask.title}'`;
 
-      await Notification.create({
+      await sendNotification({
         recipient: assignee._id,
         sender:    req.user.id,
         task:      updatedTask._id,
         type:      'assignment',
-        message:   msg
+        message:   msg,
+        io: req.app.get('io')
       });
     }
     

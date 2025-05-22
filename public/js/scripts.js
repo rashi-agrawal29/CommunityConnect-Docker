@@ -16,6 +16,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Grab the user object saved on login
   const user = JSON.parse(localStorage.getItem('user') || '{}');
+  // 🔔 Initialize Socket.io connection for real-time notifications
+  if (user.id) {
+    const socket = io('http://localhost:3000'); // Will change to our production domain
+
+    // Register the user for their personal notification channel
+    socket.emit('register', user.id);
+
+    // Handle incoming real-time notifications
+    socket.on('newNotification', function (notification) {
+      // Increment badge count
+      const badge = document.getElementById('notification-count');
+      if (badge) {
+        const currentCount = parseInt(badge.innerText || '0');
+        badge.innerText = currentCount + 1;
+        badge.style.display = 'inline-block';
+      }
+
+      // Update notification dropdown only if it's visible
+      if ($('#notificationDropdown').is(':visible')) {
+        showNotifications(); // re-fetch from server and update UI
+      }
+    });
+  }
+
 
   // If we have a name or username, show it
   
@@ -462,6 +486,8 @@ function editTask(taskId) {
         const assignedTo = $('#task_assignedTo').val().trim();
         if (assignedTo) {
           payload.assignedTo = assignedTo;
+        } else {
+          payload.assignedTo = null;
         }
 
         $.ajax({
