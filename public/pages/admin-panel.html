@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard | CommunityConnect</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="/css/admin-styles.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="/js/admin.js" defer></script>
+</head>
+<body class="admin-page">
+
+  <header class="dashboard-header">
+    <span><i class="material-icons" style="vertical-align: middle;">dashboard</i> Admin Dashboard</span>
+    <button id="logoutBtn" class="logout-btn">Logout</button>
+  </header>
+
+  <main class="dashboard-container">
+    <section>
+      <h2 class="section-title">👥 User Data</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Verified</th>
+            <th>Role</th>
+          </tr>
+        </thead>
+        <tbody id="adminUsers">
+          <!-- Filled by admin.js -->
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2 class="section-title">📝 Task Data</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Assigned To</th>
+            <th>Status</th>
+            <th>Due Date</th>
+          </tr>
+        </thead>
+        <tbody id="adminTasks">
+          <!-- Filled by admin.js -->
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2025 CommunityConnect. All rights reserved.
+  </footer>
+
+</body>
+</html>

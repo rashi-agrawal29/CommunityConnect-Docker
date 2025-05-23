@@ -133,7 +133,8 @@ router.post('/login', async (req, res) => {
       user: {
         id: user._id,
         username: user.name || user.displayName || 'User',
-        email: user.email
+        email: user.email,
+        isAdmin: user.isAdmin || false 
       },
       redirectTo: '/pages/landing.html'
     });
@@ -143,6 +144,48 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Admin Login Route
+router.post('/admin-login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required.' });
+    }
+
+    const admin = await User.findOne({ email });
+    if (!admin) {
+      return res.status(400).json({ message: 'Admin with this email not found.' });
+    }
+
+    if (!admin.isAdmin) {
+      return res.status(403).json({ message: 'Access denied: Admins only.' });
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(password, admin.password);
+    if (!isPasswordCorrect) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    const token = generateToken(admin);
+
+    res.status(200).json({
+      message: 'Admin login successful',
+      token,
+      user: {
+        id: admin._id,
+        username: admin.name || admin.displayName || 'Admin',
+        email: admin.email,
+        isAdmin: true
+      },
+      redirectTo: '/pages/admin-panel.html'
+    });
+
+  } catch (err) {
+    console.error('Admin login error:', err);
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
+});
 
 
 // Google OAuth callback route (after user authentication)
