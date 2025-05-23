@@ -15,6 +15,18 @@ mongoose.connect('mongodb://localhost:27017/CTB')
 
     // Hash password
     const password = await bcrypt.hash('password123', 10);
+    const admin_password = await bcrypt.hash('admin123', 10);
+    
+    // Create admin
+
+    const admin1 = await User.create({
+      name: 'Admin1',
+      displayName: 'Admin One',
+      email: 'admin@example.com',
+      password: admin_password,
+      isVerified: true,
+      isAdmin: true
+    });
 
     // Create users
     const user1 = await User.create({

@@ -46,12 +46,14 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Import routes
+const adminRoutes = require('./routes/admin');
 const authRoutes = require('./routes/auth');
 const authReset = require('./routes/authReset');
 const commentRoutes = require('./routes/comments');
 
 // Mount routes
 
+app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/auth', authReset);
 app.use('/api/comments', commentRoutes);
@@ -73,6 +75,11 @@ app.use('/', require('./routes/auth'));
 // Route to serve the home page
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'pages', 'home.html'));
+});
+
+// Admin Panel
+app.get('/admin_panel', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/pages/admin-login.html'));
 });
 
 

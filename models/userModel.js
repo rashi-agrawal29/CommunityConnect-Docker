@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
   googleId: String,
+  isAdmin: { type: Boolean, default: false },
   displayName: String, // Used for Gmail users
   email: { type: String, required: true, unique: true },
   password: String, // store hashed password for normal registration
