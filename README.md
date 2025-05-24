@@ -136,7 +136,7 @@ The /api/student output should look like below:
 
 ```bash
 {
-  "name": "Maithilee Dolharkar",
-  "studentId": "YOUR_STUDENT_ID"
+  "name": "Rashi Agrawal",
+  "studentId": "S224712271"
 }
 ```
