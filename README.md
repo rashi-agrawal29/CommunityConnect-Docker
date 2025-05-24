@@ -124,14 +124,19 @@ node server.js
 
 ```bash
 docker build -t communityconnect-app .
+```
 
+### Run the Docker Image locally
 
----
-## 📊 Frontend Figma Clickable design
+```bash
+docker run -p 3000:3000 communityconnect-app
+```
 
-![image](https://github.com/user-attachments/assets/0eac06c6-0104-421b-9625-77c3e9421049)
+The /api/student output should look like below:
 
-
-## 📊 Backend Architecture Diagram
-
-<img width="849" alt="image" src="https://github.com/user-attachments/assets/dc355bec-1602-41c9-8c1e-d58c7baaa5b2" />
+```bash
+{
+  "name": "Maithilee Dolharkar",
+  "studentId": "YOUR_STUDENT_ID"
+}
+```
