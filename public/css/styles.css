@@ -278,12 +278,14 @@ h5.center-align {
 
 .card-content p { line-height: 1.5; margin: .5em 0; }
 .card-title { font-size: 1.3rem; font-weight: 500; }
-@media (min-width: 992px) {
-  #worker-task-list .col.l4,
-  #my-task-list      .col.l4 {
-    flex: 0 0 33.333%;
-    max-width: 33.333%;
-  }
+#worker-task-list .col.s12 {
+  width: 100%;
+}
+#worker-task-list .col.m6 {
+  width: 50%;
+}
+#worker-task-list .col.l4 {
+  width: 50%;
 }
 
 .task-section { opacity: 0; animation: fadeIn 0.5s forwards; }

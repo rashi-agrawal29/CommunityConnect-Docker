@@ -270,25 +270,32 @@ if (isMine) {
 
   // 4) Append the card (notice where we inject our comment-toggle button and hidden panel)
   $container.append(`
-    <div class="col s12 ${isMine ? '' : 'm6'} l4">
+    <div class="col s12 m6 l4">
       <div class="card">
         <div class="card-content">
           <div style="display:flex; align-items:center; margin-bottom:.5rem; position:relative;">
             ${avatar}
-            <span class="card-title" style="margin:0">${task.title}</span>
-             ${isMine ? actions : ''}
+            <span class="card-title" style="margin:0; font-size: 1.3rem;">${task.title}</span>
           </div>
           <p>${task.description}</p>
-          <p>${dueBadge} ${statusBadge}</p>
+          <!-- Status and Due Row -->
+          <div style="display: flex; justify-content: center; margin: 0.75rem 0;">
+            ${dueBadge} ${statusBadge}
+          </div>          
         </div>
-        <div class="card-action" style="display:flex; align-items:center; gap:1rem">
-         
-          <!-- ⬇️  comment-toggle button: -->
+        <div style="display: flex; justify-content: center;">
+              ${actions}
+        </div>
+
+        <!-- ⬇️  comment-toggle button: -->
+        <div class="card-action" style="display:flex; justify-content:space-between; align-items:center;">
           <button class="btn-flat comment-toggle" data-task-id="${task._id}">
             <i class="material-icons left">chat_bubble_outline</i>
             Comments
           </button>
-          <i class="material-icons left">person</i>${asg}
+          <span style="display: flex; align-items: center;">
+            <i class="material-icons left">person</i>${asg}
+          </span>
         </div>
 
         <!-- ⬇️ comment panel, hidden by default: -->
@@ -306,7 +313,6 @@ if (isMine) {
             </button>
           </div>
         </div>
-
       </div>
     </div>
   `);
@@ -374,8 +380,14 @@ $container.append(`
             ${actions}
           </div>
           <p>${task.description}</p>
-          <p>${statusBadge} ${dueBadge}</p>
-          <p>Assigned to: ${assigneeName}</p>
+          <p style="margin: 0.5rem 0;">
+            <strong>Assigned to:</strong> ${assigneeName}
+          </p>
+          <!-- Status + Due Badges -->
+          <div style="display: flex; justify-content: center; gap: 0.75rem; margin-top: 0.5rem;">
+            ${statusBadge}
+            ${dueBadge}
+          </div>
         </div>
 
         <div class="card-action">
