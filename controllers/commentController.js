@@ -39,7 +39,7 @@ exports.createComment = async (req, res, next) => {
         recipient: task.createdBy._id,
         sender: req.user.id,
         task: task._id,
-        message: `A new comment has been added to your task '${task.name}'`,
+        message: `A new comment has been added to your task '${task.title}'`,
         type: 'general',
         io: req.app.get('io')
       });

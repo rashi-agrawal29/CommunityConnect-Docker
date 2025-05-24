@@ -226,13 +226,30 @@ function renderTaskCard($container, isMine, task) {
   const due = new Date(task.dueDate).toLocaleDateString();
 
   // 1) Actions
-  let actions = '';
-  if (isMine) {
-    actions = `
-      <a href="#" onclick="updateTaskStatus('${task._id}','Working')">Working</a>
-      <a href="#" onclick="updateTaskStatus('${task._id}','Completed')">Completed</a>
-    `;
-  } else {
+let actions = '';
+if (isMine) {
+  const dropdownId = `wk-actions-${task._id}`;
+  actions = `
+    <!-- trigger icon -->
+    <a class="dropdown-trigger" href="#!" data-target="${dropdownId}">
+      <i class="material-icons">more_vert</i>
+    </a>
+    <!-- menu contents -->
+    <ul id="${dropdownId}" class="dropdown-content">
+      <li>
+        <a href="#!" onclick="updateTaskStatus('${task._id}','Working')">
+          Working
+        </a>
+      </li>
+      <li>
+        <a href="#!" onclick="updateTaskStatus('${task._id}','Completed')">
+          Completed
+        </a>
+      </li>
+    </ul>
+  `;
+}
+ else {
     const appliedTasks = JSON.parse(localStorage.getItem('appliedTasks')) || [];
     const isApplied = appliedTasks.includes(task._id);
     actions = isApplied
@@ -253,24 +270,32 @@ function renderTaskCard($container, isMine, task) {
 
   // 4) Append the card (notice where we inject our comment-toggle button and hidden panel)
   $container.append(`
-    <div class="col s12 ${isMine ? '' : 'm6'} l4">
+    <div class="col s12 m6 l4">
       <div class="card">
         <div class="card-content">
-          <div style="display:flex; align-items:center; margin-bottom:.5rem">
+          <div style="display:flex; align-items:center; margin-bottom:.5rem; position:relative;">
             ${avatar}
-            <span class="card-title" style="margin:0">${task.title}</span>
+            <span class="card-title" style="margin:0; font-size: 1.3rem;">${task.title}</span>
           </div>
           <p>${task.description}</p>
-          <p>${dueBadge} ${statusBadge}</p>
+          <!-- Status and Due Row -->
+          <div style="display: flex; justify-content: center; margin: 0.75rem 0;">
+            ${dueBadge} ${statusBadge}
+          </div>          
         </div>
-        <div class="card-action" style="display:flex; align-items:center; gap:1rem">
-          ${actions}
-          <!-- ⬇️  comment-toggle button: -->
+        <div style="display: flex; justify-content: center;">
+              ${actions}
+        </div>
+
+        <!-- ⬇️  comment-toggle button: -->
+        <div class="card-action" style="display:flex; justify-content:space-between; align-items:center;">
           <button class="btn-flat comment-toggle" data-task-id="${task._id}">
             <i class="material-icons left">chat_bubble_outline</i>
             Comments
           </button>
-          <i class="material-icons left">person</i>${asg}
+          <span style="display: flex; align-items: center;">
+            <i class="material-icons left">person</i>${asg}
+          </span>
         </div>
 
         <!-- ⬇️ comment panel, hidden by default: -->
@@ -288,7 +313,6 @@ function renderTaskCard($container, isMine, task) {
             </button>
           </div>
         </div>
-
       </div>
     </div>
   `);
@@ -330,29 +354,43 @@ function renderTaskCardAdmin($container, task) {
   const avatarLetter = assigneeName.charAt(0).toUpperCase();
   const avatar = `<div class="avatar">${avatarLetter}</div>`;
   // action links
-  const actions = `
-    <a href="#" onclick="editTask('${task._id}')">Edit</a>
-    <a href="#" onclick="deleteTask('${task._id}')">Delete</a>
-    <a href="#" onclick="updateTaskStatus('${task._id}','Completed')">Completed</a>
-  `;
+  const dropdownId = `admin-actions-${task._id}`;
+const actions = `
+  <a class="dropdown-trigger" href="#!" data-target="${dropdownId}">
+    <i class="material-icons">more_vert</i>
+  </a>
+  <ul id="${dropdownId}" class="dropdown-content">
+    <li>
+      <a href="#!" onclick="editTask('${task._id}')">Edit</a>
+    </li>
+    <li>
+      <a href="#!" onclick="deleteTask('${task._id}')">Delete</a>
+    </li>
+  </ul>
+`;
+
 
 $container.append(`
     <div class="col s12 m6 l4">
       <div class="card task-card-admin">
-
         <div class="card-content">
-          <div class="card-header">
+          <div class="card-header"style="display:flex; align-items:center; position:relative;">
             ${avatar}
             <span class="card-title">${task.title}</span>
+            ${actions}
           </div>
           <p>${task.description}</p>
-          <p>${statusBadge} ${dueBadge}</p>
-          <p>Assigned to: ${assigneeName}</p>
+          <p style="margin: 0.5rem 0;">
+            <strong>Assigned to:</strong> ${assigneeName}
+          </p>
+          <!-- Status + Due Badges -->
+          <div style="display: flex; justify-content: center; gap: 0.75rem; margin-top: 0.5rem;">
+            ${statusBadge}
+            ${dueBadge}
+          </div>
         </div>
 
         <div class="card-action">
-          ${actions}
-
           <!-- Comment toggle button -->
           <button
             class="btn-flat comment-toggle"
@@ -394,6 +432,15 @@ $container.append(`
       </div>
     </div>
   `);
+
+  // at the bottom of scripts.js, or right after you append cards:
+document.querySelectorAll('.dropdown-trigger').forEach(el => {
+  M.Dropdown.init(el, {
+    coverTrigger: false,
+    constrainWidth: false
+  });
+});
+
 }
 
 
