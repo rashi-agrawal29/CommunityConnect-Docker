@@ -118,6 +118,14 @@ npm install
 node server.js
 ```
 
+## Docker Instructions
+
+### Build the Docker Image
+
+```bash
+docker build -t communityconnect-app .
+
+
 ---
 ## 📊 Frontend Figma Clickable design
 
