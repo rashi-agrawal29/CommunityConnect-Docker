@@ -50,6 +50,7 @@ const adminRoutes = require('./routes/admin');
 const authRoutes = require('./routes/auth');
 const authReset = require('./routes/authReset');
 const commentRoutes = require('./routes/comments');
+const studentRoute = require('./routes/student');
 
 // Mount routes
 
@@ -57,6 +58,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/auth', authReset);
 app.use('/api/comments', commentRoutes);
+app.use('/api/student', studentRoute);
 
 const authController = require('./controllers/authController');
 
@@ -84,7 +86,7 @@ app.get('/admin_panel', (req, res) => {
 
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/CTB')
+mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log("MongoDB connected!"))
   .catch((err) => console.log(err));
 
